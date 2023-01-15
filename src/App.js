@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import NavRoot from "./components/NavRoot";
+//import SideNav from "./components/Airlines";
+import Destinations from "./components/Destinations";
+import { destinationsLoader } from "./components/Destinations";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import Airlines, { airlineLoader } from "./components/Airlines";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<NavRoot />}>
+      <Route path="airlines" element={<Airlines />} loader={airlineLoader}>
+        <Route
+          path=":slug"
+          element={<Destinations />}
+          loader={destinationsLoader}
+        />
+      </Route>
+    </Route>,
+  ),
+);
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
