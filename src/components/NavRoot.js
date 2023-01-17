@@ -9,7 +9,7 @@ export default function NavRoot() {
         </h1>
         <div>
           <NavLink to="/">Home</NavLink>
-          <Link to="/airlines/soutwest-Airlines">Airline</Link>
+          <NavLink to="/airlines">Airlines</NavLink>
         </div>
       </nav>
 
