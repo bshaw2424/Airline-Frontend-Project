@@ -2,6 +2,7 @@ import "./App.css";
 import NavRoot from "./components/NavRoot";
 //import SideNav from "./components/Airlines";
 import Destinations from "./components/Destinations";
+import Home from "./components/Home";
 import { destinationsLoader } from "./components/Destinations";
 import {
   createBrowserRouter,
@@ -14,19 +15,24 @@ import Airlines, { airlineLoader } from "./components/Airlines";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<NavRoot />}>
-      <Route path="airlines" element={<Airlines />} loader={airlineLoader}>
-        <Route
-          path=":slug"
-          element={<Destinations />}
-          loader={destinationsLoader}
-        />
-      </Route>
+      <Route index element={<Home />} />
+      <Route path="airlines" element={<Airlines />} loader={airlineLoader} />
+
+      <Route
+        path="airlines/:slug"
+        element={<Destinations />}
+        loader={destinationsLoader}
+      />
     </Route>,
   ),
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;
