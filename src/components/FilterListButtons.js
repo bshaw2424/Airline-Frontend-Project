@@ -1,14 +1,11 @@
-export default function FilterListButtons({
-  btnName,
-  className,
-  destinations,
-  choice,
-}) {
+import { NavLink } from "react-router-dom";
+
+export default function FilterListButtons({ btnName, className, choice }) {
   return (
-    <section className="m-3">
-      <button className={`btn btn-${className}`} onClick={choice}>
-        {btnName}
+    <>
+      <button className={`btn btn-outline-${className} mx-1`} onClick={choice}>
+        <NavLink>{btnName}</NavLink>
       </button>
-    </section>
+    </>
   );
 }
