@@ -32,3 +32,19 @@ a {
   text-decoration: none;
   color: #333;
 }
+
+.list-flex {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.width {
+  width: 100%;
+}
+/* .airline-link {
+  background: hsla(176, 100%, 96%, 1);
+} */
+.airline-link:hover {
+  background: hsla(176, 100%, 92%, 1);
+  border: none;
+}
