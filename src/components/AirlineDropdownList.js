@@ -1,27 +1,31 @@
-export default function AirlineDropdownList() {
+import SideNav from "./SideNav";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+export default function AirlineDropdownList({ destinations }) {
+  const [airlineNames, setAirlineNames] = useState([destinations]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/airlines")
+      .then(res => {
+        console.log(res.data);
+        setAirlineNames(res.data);
+      })
+      .catch(error => console.log(error));
+  }, [airlineNames]);
+
   return (
-    <div class="dropdown">
+    <span className="dropdown">
       <button
-        class="btn btn-secondary dropdown-toggle"
+        className="btn dropdown-toggle"
         type="button"
-        id="dropdownMenuButton"
-        data-toggle="dropdown"
-        aria-haspopup="true"
+        data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        Dropdown button
+        Change Airlines
       </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="fd" alt="ldfldj">
-          Action
-        </a>
-        <a class="dropdown-item" href="#">
-          Another action
-        </a>
-        <a class="dropdown-item" href="#">
-          Something else here
-        </a>
-      </div>
-    </div>
+      <SideNav airline={airlineNames} />
+    </span>
   );
 }
