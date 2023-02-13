@@ -2,45 +2,51 @@ import { useState } from "react";
 import AirlineDropdownList from "./AirlineDropdownList";
 import FilterListButtons from "./FilterListButtons";
 import InternationalList from "./InternationalList";
-import MainDestinationList from "./MainDestinationList";
-import { internationalTotalDestinations } from "../UtilityFunctions";
-import SeasonalList from "./SeasonalList";
-import Response from "./Response";
-import AirlineDisplay from "./AirlineDisplay";
 
-export default function International({ destinations }) {
-  const [destination, setDestination] = useState(
+import StateFilter from "./StateFilter";
+import MainDestinationList from "./MainDestinationList";
+import SeasonalList from "./SeasonalList";
+
+export default function ButtonContainer({ destinations }) {
+  const [mainData, setMainData] = useState(true);
+  const [seasonalData, setSeasonalData] = useState();
+  const [internationalData, setInternationalData] = useState();
+  const [destinationNumber, setDestinatonNumber] = useState(
     destinations.destinations.length,
   );
-  const [destinationList, setDestinationList] = useState(false);
-  const [seasonalList, setSeasonalList] = useState(false);
-  const [mainList, setMainList] = useState(true);
-  const [name, setName] = useState(["Seasonal"]);
-
-  function seasonalTotalDestinations() {
-    setDestination(
-      destinations.destinations.filter(arr => arr.seasonal === "true").length,
+  function MainData() {
+    setDestinatonNumber(
+      destinations.destinations.filter(mainList => mainList).length,
     );
-    setSeasonalList(true);
-    setDestinationList(false);
-    setMainList(false);
+    setMainData(true);
+    setInternationalData(false);
+    seasonalData(false);
   }
+  function InternationalData() {
+    setDestinatonNumber(
+      destinations.destinations.filter(
+        internationalList => internationalList.international === "true",
+      ).length,
+    );
 
-  function TotalDestinations() {
-    setDestination(destinations.destinations.filter(arr => arr).length);
-    setMainList(true);
-    setSeasonalList(false);
-    setDestinationList(false);
+    setInternationalData(true);
+    setMainData(false);
+    setSeasonalData(false);
   }
-
-  function airlineNameDropDownMenu() {
-    console.log("hello world");
+  function SeasonalData() {
+    setDestinatonNumber(
+      destinations.destinations.filter(
+        seasonalList => seasonalList.seasonal === "true",
+      ).length,
+    );
+    setSeasonalData(true);
+    setMainData(false);
+    setInternationalData(false);
   }
-
   return (
-    <section className="container my-5">
-      <div>
-        <h1 className="text-center">
+    <section className="container m-5">
+      <div className="d-flex align-items-center justify-content-between">
+        <div className="d-flex flex-column justify-content-center align-items-center">
           <img
             src={`../../../${destinations.logo}.png`}
             alt={`${destinations.name} logo`}
@@ -48,73 +54,71 @@ export default function International({ destinations }) {
             width="255px"
             style={{ objectFit: "contain" }}
           />
-          <p>Destinations - {destination}</p>
-          <AirlineDisplay mike={destinations} />
-        </h1>
-        <p style={{ textAlign: "center" }}>
-          Official Website -{" "}
-          <a
-            href={destinations.website}
-            alt={`${destinations.name}'s website`}
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "blue" }}
-          >
-            {destinations.website}
-          </a>
-        </p>
-      </div>
-      <section className="d-flex justify-content-center">
-        <FilterListButtons
-          btnName={"All"}
-          className={"primary"}
-          destinations={destinations}
-          choice={() => {
-            TotalDestinations();
-          }}
-        />
-        <FilterListButtons
-          btnName={"International"}
-          className={"primary"}
-          destinations={destinations}
-          choice={() => {
-            internationalTotalDestinations(
-              setDestination,
-              destinations,
-              setDestinationList,
-              setMainList,
-              setSeasonalList,
-            );
-          }}
-        />
+        </div>
+        <div>
+          <h1 className="text-center mb-3">
+            {destinationNumber} - Destinations
+          </h1>
 
-        <FilterListButtons
-          btnName={"Seasonal"}
-          className={"primary"}
-          destinations={destinations}
-          choice={() => {
-            seasonalTotalDestinations();
-          }}
-        />
-        <AirlineDropdownList
-          destinations={destinations}
-          onClick={() => airlineNameDropDownMenu()}
-        />
+          <p style={{ textAlign: "center" }}>
+            Official Website -
+            <a
+              href={destinations.website}
+              alt={`${destinations.name}'s website`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: "blue" }}
+              className="px-1"
+            >
+              {destinations.website}
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {/* filter through airline data buttons */}
+      <section
+        className="d-flex justify-content-between p-4 align-items-center"
+        style={{ outline: "2px solid #333" }}
+      >
+        <div>
+          <FilterListButtons
+            btnName={"All"}
+            className={"primary"}
+            destinations={destinations}
+            listData={() => {
+              MainData();
+            }}
+          />
+          <FilterListButtons
+            btnName={"International"}
+            className={"primary"}
+            listData={() => {
+              InternationalData();
+            }}
+          />
+
+          <FilterListButtons
+            btnName={"Seasonal"}
+            className={"primary"}
+            destinations={destinations}
+            listData={() => {
+              SeasonalData();
+            }}
+          />
+        </div>
+        <div className="d-flex">
+          <AirlineDropdownList destinations={destinations} />
+          <StateFilter state={destinations} dropDownName={"Filter By State"} />
+        </div>
       </section>
 
-      {/* show the all the destinations */}
-      {mainList ? <MainDestinationList destinations={destinations} /> : null}
-
-      {/* show only the international destinations */}
-      {destinationList ? (
-        <InternationalList destinations={destinations} />
-      ) : null}
-
-      {/* show only seasonal destinations */}
-      {seasonalList ? <SeasonalList destinations={destinations} /> : null}
-      {destination === 0 ? (
-        <Response message={`Currently No ${name} destinations`} />
-      ) : null}
+      {/* data display */}
+      {MainData}
+      {destinationNumber === 0 ? <h1>Currently No Destination</h1> : null}
+      {internationalData && <InternationalList destinations={destinations} />}
+      {mainData && <MainDestinationList destinations={destinations} />}
+      {seasonalData && <SeasonalList destinations={destinations} />}
     </section>
   );
 }
