@@ -9,14 +9,13 @@ export default function AirlineDropdownList({ destinations }) {
     axios
       .get("http://localhost:8080/airlines")
       .then(res => {
-        console.log(res.data);
         setAirlineNames(res.data);
       })
       .catch(error => console.log(error));
-  }, [airlineNames]);
+  }, []);
 
   return (
-    <span className="dropdown">
+    <span className="dropdown ms-5">
       <button
         className="btn dropdown-toggle"
         type="button"
