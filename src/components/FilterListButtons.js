@@ -1,9 +1,12 @@
 import { NavLink } from "react-router-dom";
 
-export default function FilterListButtons({ btnName, className, choice }) {
+export default function FilterListButtons({ btnName, className, listData }) {
   return (
     <>
-      <button className={`btn btn-outline-${className} mx-1`} onClick={choice}>
+      <button
+        className={`btn btn-outline-${className} filter-buttons mx-1`}
+        onClick={listData}
+      >
         <NavLink>{btnName}</NavLink>
       </button>
     </>
