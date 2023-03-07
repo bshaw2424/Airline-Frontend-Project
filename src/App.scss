@@ -1,0 +1,53 @@
+@import "../public/sass/variables";
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $heading-font-family;
+  color: $content-text-color;
+}
+body,
+p,
+button a {
+  font-family: $content-font-family;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+.list-flex {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.width {
+  width: 100%;
+}
+/* .airline-link {
+  background: hsla(176, 100%, 96%, 1);
+} */
+.airline-link:hover {
+  background: hsla(176, 100%, 92%, 1);
+  border: none;
+}
+.list-flex:nth-child(even) {
+  // background-color: #eff1f4;
+  border: none;
+}
+
+.filter-buttons {
+  color: #333;
+  &:hover {
+    color: #333;
+    background: transparent;
+  }
+}
+
+.button-contain {
+  outline: 1px solid #333;
+}
