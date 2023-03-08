@@ -3,7 +3,7 @@ export function getStates(airlineDestinationLocation) {
     destinationStates => destinationStates.state,
   );
   const filterStates = [...new Set(getLocationDestinations)]
-    .map(state => state)
+    .map(destinationLocationState => destinationLocationState)
     .sort();
 
   return filterStates;
@@ -22,13 +22,23 @@ export function airlineNamesForDropdownList(airlineNames) {
   return getAirlineNames;
 }
 
-//   const airlineNameDropdownList = airline.map(airlines => (
-//     <li>
-//       <a
-//         key={airline._id}
-//         className="dropdown-item"
-//         href={`/airlines/${airlines.slug}`}
-//       >
-//         {airlines.name}
-//       </a>
-//     </li>
+export const getNumbers = airlines => airlines.map(a => a.destinations.length);
+
+export const getLengthOfAirlineDestinations = (
+  e,
+  airline,
+  stateLocation,
+  main,
+) => {
+  const getAirlineDestinationsLengths = airline
+    .filter(
+      names =>
+        names.slug === e.target.innerText.replace(/ /g, "-").toLowerCase(),
+    )
+    .map(
+      airlineDestinationsLength =>
+        airlineDestinationsLength.destinations.length,
+    );
+  stateLocation(getAirlineDestinationsLengths);
+  main(true);
+};
