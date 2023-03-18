@@ -36,15 +36,21 @@ a {
   border: none;
 }
 .list-flex:nth-child(even) {
-  // background-color: #eff1f4;
+  background-color: hsla(216, 98%, 94%, 1);
   border: none;
 }
 
-.filter-buttons {
-  color: #333;
-  &:hover {
+.btn.filter-buttons {
+  background-color: $filter-buttons-background-color;
+  &.active:hover {
+    background-color: hsla(216, 98%, 64%, 1);
+  }
+  &.active:focus {
+    // outline: 1.5px solid #333;
+    // outline-offset: 4px;
+    background-color: hsla(216, 98%, 100%, 1);
     color: #333;
-    background: transparent;
+    outline: 2px solid hsla(216, 98%, 54%, 1);
   }
 }
 
