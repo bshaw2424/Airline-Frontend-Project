@@ -1,8 +1,9 @@
-import "./App.css";
+import "./App.scss";
 import NavRoot from "./components/NavRoot";
-//import SideNav from "./components/Airlines";
+import Footer from "./components/Footer";
 import Destinations from "./components/Destinations";
 import Home from "./components/Home";
+import AirlineData, { airlinedesLoader } from "./components/AirlineData";
 import { destinationsLoader } from "./components/Destinations";
 import {
   createBrowserRouter,
@@ -10,19 +11,28 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Airlines, { airlineLoader } from "./components/Airlines";
+import AirlineLanding, { airlineLoader } from "./components/AirlinesLanding";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<NavRoot />}>
       <Route index element={<Home />} />
-      <Route path="airlines" element={<Airlines />} loader={airlineLoader} />
-
+      <Route
+        path="airlines"
+        element={<AirlineLanding />}
+        loader={airlineLoader}
+      />
       <Route
         path="airlines/:slug"
+        element={<AirlineData />}
+        loader={airlinedesLoader}
+      />
+      <Route
+        path="airlines/:slug/destinations"
         element={<Destinations />}
         loader={destinationsLoader}
       />
+      <Route path="*" element={"Page not found"} />
     </Route>,
   ),
 );
@@ -31,6 +41,7 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
+      <Footer />
     </>
   );
 }
