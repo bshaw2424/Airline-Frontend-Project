@@ -8,7 +8,8 @@ export default function NavRoot() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          background: "blue",
+          background: "hsla(226, 100%, 70%, 1)",
+          color: "#fff",
         }}
       >
         <nav className="container nav d-flex justify-content-between align-items-center py-2">
@@ -18,11 +19,13 @@ export default function NavRoot() {
             </Link>
           </h1>
           <div className="d-flex">
-            <NavLink Link to="/" className="mx-2">
+            <NavLink style={{ color: "#fff" }} Link to="/" className="mx-2">
               Home
             </NavLink>
 
-            <NavLink to="/airlines">Airlines</NavLink>
+            <NavLink style={{ color: "#fff" }} to="/airlines">
+              Airlines
+            </NavLink>
           </div>
         </nav>
       </div>
