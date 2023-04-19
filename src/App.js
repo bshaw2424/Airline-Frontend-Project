@@ -4,9 +4,7 @@ import Footer from "./components/Footer";
 import Destinations from "./components/Destinations";
 import Home from "./components/Home";
 import AirlineData, { airlinedesLoader } from "./components/AirlineData";
-import AirlineSearch from "./components/AirlineSearch";
 import { destinationsLoader } from "./components/Destinations";
-import { destinationIndexLoader } from "./components/AirlineSearch";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -23,11 +21,6 @@ const router = createBrowserRouter(
         path="airlines"
         element={<AirlineLanding />}
         loader={airlineLoader}
-      />
-      <Route
-        path="/airlines/search"
-        element={<AirlineSearch />}
-        loader={destinationIndexLoader}
       />
 
       <Route
