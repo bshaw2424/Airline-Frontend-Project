@@ -3,6 +3,9 @@ import NavRoot from "./components/NavRoot";
 import Footer from "./components/Footer";
 import Destinations from "./components/Destinations";
 import Home from "./components/Home";
+import AirlineSearch, {
+  destinationIndexLoader,
+} from "./components/AirlineSearch";
 import AirlineData, { airlinedesLoader } from "./components/AirlineData";
 import { destinationsLoader } from "./components/Destinations";
 import {
@@ -22,7 +25,11 @@ const router = createBrowserRouter(
         element={<AirlineLanding />}
         loader={airlineLoader}
       />
-
+      <Route
+        path="airlines/info"
+        element={<AirlineSearch />}
+        loader={destinationIndexLoader}
+      />
       <Route
         path="airlines/:slug/details"
         element={<AirlineData />}
