@@ -68,10 +68,9 @@ export const findByState = (arr, category, targetValue) => {
     list.push({ name: key, value });
   }
 
-  const filterList = list
+  return list
     .filter(airline => airline.value !== 0)
     .map(airline => `${airline.name} - ${airline.value}`);
-  return filterList;
 };
 
 export const findByCity = (arr, category, targetValue) => {
@@ -82,10 +81,9 @@ export const findByCity = (arr, category, targetValue) => {
   for (const [key, value] of airlineMap) {
     list.push({ name: key, value });
   }
-  const filterList = list
+  return list
     .filter(airline => airline.value !== 0)
     .map(airline => `${airline.name}`);
-  return filterList;
 };
 
 export const findByAirportCode = (arr, category, targetValue) => {
