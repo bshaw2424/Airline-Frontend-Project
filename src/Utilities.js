@@ -59,7 +59,21 @@ export const filterAirlineCity = (airlineArray, category, airlineCity) =>
     .filter(airline => airline[category] === airlineCity)
     .map(a => <>{a.name}</>).length;
 
-export const findByState = (arr, category, targetValue) => {
+export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
+  const airlineDataMap = new Map();
+  const dataList = [];
+  airlineDataMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
+
+  for (const [key, value] of airlineDataMap) {
+    dataList.push({ name: key, value });
+  }
+
+  return dataList
+    .filter(airline => airline.value !== 0)
+    .map(airline => airline.name);
+};
+
+export const getFilteredDataByState = (arr, category, targetValue) => {
   const airlineMap = new Map();
   const list = [];
   airlineMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
@@ -71,37 +85,4 @@ export const findByState = (arr, category, targetValue) => {
   return list
     .filter(airline => airline.value !== 0)
     .map(airline => `${airline.name} - ${airline.value}`);
-};
-
-export const findByCity = (arr, category, targetValue) => {
-  const airlineMap = new Map();
-  const list = [];
-  airlineMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
-
-  for (const [key, value] of airlineMap) {
-    list.push({ name: key, value });
-  }
-  return list
-    .filter(airline => airline.value !== 0)
-    .map(airline => `${airline.name}`);
-};
-
-export const findByAirportCode = (arr, category, targetValue) => {
-  // create a new Map
-  const airlineMap = new Map();
-
-  const airportCodeList = [];
-
-  // set map to key/value pairs by airline and array of objects for the airport codes
-  airlineMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
-
-  for (const [key, value] of airlineMap) {
-    // pushes values to airportCodeList array
-    airportCodeList.push({ name: key, value });
-  }
-
-  // return a filter list based on if the value is either a 0 or 1;
-  return airportCodeList
-    .filter(airline => airline.value !== 0)
-    .map(airline => `${airline.name}`);
 };
