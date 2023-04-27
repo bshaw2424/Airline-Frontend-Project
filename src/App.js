@@ -3,9 +3,7 @@ import NavRoot from "./components/NavRoot";
 import Footer from "./components/Footer";
 import Destinations from "./components/Destinations";
 import Home from "./components/Home";
-import AirlineSearch, {
-  destinationIndexLoader,
-} from "./components/AirlineSearch";
+import { destinationIndexLoader } from "./components/AirlineSearch";
 import AirlineData, { airlinedesLoader } from "./components/AirlineData";
 import { destinationsLoader } from "./components/Destinations";
 import {
@@ -14,7 +12,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import AirlineLanding, { airlineLoader } from "./components/AirlinesLanding";
+import AirlineLanding from "./components/AirlinesLanding";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,13 +21,13 @@ const router = createBrowserRouter(
       <Route
         path="airlines"
         element={<AirlineLanding />}
-        loader={airlineLoader}
+        loader={destinationIndexLoader}
       />
-      <Route
+      {/* <Route
         path="airlines/info"
         element={<AirlineSearch />}
         loader={destinationIndexLoader}
-      />
+      /> */}
       <Route
         path="airlines/:slug/details"
         element={<AirlineData />}
