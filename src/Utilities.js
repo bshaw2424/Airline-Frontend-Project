@@ -75,6 +75,7 @@ export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
   const airlineMap = new Map();
+
   const list = [];
   airlineMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
 
