@@ -57,11 +57,13 @@ export const airlineList = airlineArray => {
 export const filterAirlineCity = (airlineArray, category, airlineCity) =>
   airlineArray.destinations
     .filter(airline => airline[category] === airlineCity)
-    .map(a => <>{a.name}</>).length;
+    .map(a => a.name).length;
 
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   const airlineDataMap = new Map();
   const dataList = [];
+  // const all = (arr[category] = targetValue.toUpperCase());
+  // console.log(all);
   airlineDataMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
 
   for (const [key, value] of airlineDataMap) {
@@ -86,4 +88,24 @@ export const getFilteredDataByState = (arr, category, targetValue) => {
   return list
     .filter(airline => airline.value !== 0)
     .map(airline => `${airline.name} - ${airline.value}`);
+};
+
+export const upperCaseFirstLetterOfWord = wordToChangeFirstLetter => {
+  const splitWordsAtEmptySpace = wordToChangeFirstLetter.split(" ");
+
+  let combinedString = "";
+
+  for (let i = 0; i < splitWordsAtEmptySpace.length; i++) {
+    // get the first letter of word and captialize it
+    const getFirstLetterOfWord = splitWordsAtEmptySpace[i]
+      .charAt(0)
+      .toUpperCase();
+
+    // slice at index first letter to get the rest of the word minus the first letter
+    const getRestOfWord = splitWordsAtEmptySpace[i].slice(1);
+    // combine the captial letter with the rest of the word
+    combinedString += `${getFirstLetterOfWord}${getRestOfWord} `;
+  }
+  // return combine word and erase and leading or trailing spaces using trim
+  return combinedString.trim();
 };
