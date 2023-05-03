@@ -102,7 +102,11 @@ export const upperCaseFirstLetterOfWord = wordToChangeFirstLetter => {
       .toUpperCase();
 
     // slice at index first letter to get the rest of the word minus the first letter
-    const getRestOfWord = splitWordsAtEmptySpace[i].slice(1);
+    let getRestOfWord = splitWordsAtEmptySpace[i].slice(1);
+
+    if (getRestOfWord.toUpperCase()) {
+      getRestOfWord = getRestOfWord.toLowerCase();
+    }
     // combine the captial letter with the rest of the word
     combinedString += `${getFirstLetterOfWord}${getRestOfWord} `;
   }
