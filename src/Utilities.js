@@ -62,10 +62,10 @@ export const filterAirlineCity = (airlineArray, category, airlineCity) =>
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   const airlineDataMap = new Map();
   const dataList = [];
-  // const all = (arr[category] = targetValue.toUpperCase());
-  // console.log(all);
+
   airlineDataMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
 
+  console.log([[arr.name]]);
   for (const [key, value] of airlineDataMap) {
     dataList.push({ name: key, value });
   }
