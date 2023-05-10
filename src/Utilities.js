@@ -54,40 +54,52 @@ export const airlineList = airlineArray => {
   return airlineArray.map(airline => airline.name);
 };
 
-export const filterAirlineCity = (airlineArray, category, airlineCity) =>
+const createFilteredDataList = (name, value) => {
+  const dataList = [{ name, value }];
+  return dataList.filter(airline => airline.value !== 0);
+};
+
+export const getLengthOfAirlineCategory = (
+  airlineArray,
+  category,
+  airlineCity,
+) =>
   airlineArray.destinations
     .filter(airline => airline[category] === airlineCity)
     .map(a => a.name).length;
 
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
-  const airlineDataMap = new Map();
-  const dataList = [];
+  const filteredData = getLengthOfAirlineCategory(arr, category, targetValue);
 
-  airlineDataMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
-
-  console.log([[arr.name]]);
-  for (const [key, value] of airlineDataMap) {
-    dataList.push({ name: key, value });
-  }
-
-  return dataList
-    .filter(airline => airline.value !== 0)
-    .map(airline => airline.name);
+  let a = createFilteredDataList(arr.name, filteredData).map(
+    airline => airline.name,
+  );
+  return a;
 };
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
-  const airlineMap = new Map();
+  const filterByState = getLengthOfAirlineCategory(arr, category, targetValue);
+  const a = createFilteredDataList(arr.name, filterByState).map(
+    airline => `${airline.name} - ${airline.value}`,
+  );
+  return a;
+};
 
-  const list = [];
-  airlineMap.set(arr.name, filterAirlineCity(arr, category, targetValue));
-
-  for (const [key, value] of airlineMap) {
-    list.push({ name: key, value });
-  }
-
-  return list
-    .filter(airline => airline.value !== 0)
-    .map(airline => `${airline.name} - ${airline.value}`);
+export const displayMessageIfSearchInputNotFound = (
+  airlineArray,
+  airlineCategory,
+  userInputValue,
+) => {
+  return airlineArray.map(getAirline =>
+    // find user input if some of the items in the array are true
+    getAirline.destinations.some(
+      inputFormValue =>
+        // find by airline category ie [state, city, airport code] by uppercase or first letter captial
+        inputFormValue[airlineCategory] ===
+          upperCaseFirstLetterOfWord(userInputValue) ||
+        inputFormValue[airlineCategory] === userInputValue.toUpperCase(),
+    ),
+  );
 };
 
 export const upperCaseFirstLetterOfWord = wordToChangeFirstLetter => {
@@ -113,3 +125,14 @@ export const upperCaseFirstLetterOfWord = wordToChangeFirstLetter => {
   // return combine word and erase and leading or trailing spaces using trim
   return combinedString.trim();
 };
+
+export const getNumberLengthOfSearch = (
+  airlines,
+  searchCategory,
+  searchInput,
+) =>
+  displayMessageIfSearchInputNotFound(
+    airlines,
+    searchCategory,
+    searchInput,
+  ).filter(airlineInArray => airlineInArray === true).length;
