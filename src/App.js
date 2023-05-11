@@ -23,16 +23,7 @@ const router = createBrowserRouter(
         element={<AirlineLanding />}
         loader={destinationIndexLoader}
       />
-      {/* <Route
-        path="airlines/info"
-        element={<AirlineSearch />}
-        loader={destinationIndexLoader}
-      /> */}
-      <Route
-        path="airlines/:slug/details"
-        element={<AirlineData />}
-        loader={airlinedesLoader}
-      />
+
       <Route
         path="airlines/:slug/destinations"
         element={<Destinations />}
