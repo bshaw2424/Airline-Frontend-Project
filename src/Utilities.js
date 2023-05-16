@@ -136,3 +136,27 @@ export const getNumberLengthOfSearch = (
     searchCategory,
     searchInput,
   ).filter(airlineInArray => airlineInArray === true).length;
+
+export const getCitiesDestinationsList = (cityArray, userTargetTextValue) => {
+  const cities = cityArray
+    .map(airline =>
+      airline.destinations.map(destination => ({
+        city: destination.city.trim(),
+        state: destination.state,
+      })),
+    )
+    .flat();
+
+  const uniqueCities = [];
+
+  return cities
+    .filter(a => a.city === userTargetTextValue)
+    .map(a => {
+      const cityState = `${a.city} - ( ${a.state} )`;
+      if (!uniqueCities.includes(cityState)) {
+        uniqueCities.push(cityState);
+        return <div key={cityState}>{cityState}</div>;
+      }
+      return null;
+    });
+};
