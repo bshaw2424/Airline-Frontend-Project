@@ -160,3 +160,6 @@ export const getCitiesDestinationsList = (cityArray, userTargetTextValue) => {
       return null;
     });
 };
+
+export const turnDatabaseStringIntoBoolean = stringValue =>
+  Boolean(stringValue);
