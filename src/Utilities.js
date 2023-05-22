@@ -79,10 +79,9 @@ export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
   const filterByState = getLengthOfAirlineCategory(arr, category, targetValue);
-  const a = createFilteredDataList(arr.name, filterByState).map(
-    airline => `${airline.name} - ${airline.value}`,
+  return createFilteredDataList(arr.name, filterByState).map(
+    airline => `${airline.name} - ${airline.value}*`,
   );
-  return a;
 };
 
 export const displayMessageIfSearchInputNotFound = (
