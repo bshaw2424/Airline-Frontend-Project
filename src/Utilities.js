@@ -71,10 +71,9 @@ export const getLengthOfAirlineCategory = (
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   const filteredData = getLengthOfAirlineCategory(arr, category, targetValue);
 
-  let a = createFilteredDataList(arr.name, filteredData).map(
+  return createFilteredDataList(arr.name, filteredData).map(
     airline => airline.name,
   );
-  return a;
 };
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
@@ -162,3 +161,23 @@ export const getCitiesDestinationsList = (cityArray, userTargetTextValue) => {
 
 export const turnDatabaseStringIntoBoolean = stringValue =>
   Boolean(stringValue);
+
+export const getNameOfAirportFromAirportCodeInput = (airline, airportCode) => {
+  const getDest = airline.map(a =>
+    a.destinations
+      .filter(a => a.airport_code === airportCode)
+      .map(a => a.airport_name),
+  );
+
+  const getAirportName = getDest.reduce((airlineArray, currentAirportName) => {
+    for (let airportName of currentAirportName) {
+      if (!airlineArray.includes(airportName)) {
+        airlineArray.push(airportName);
+      }
+    }
+
+    return airlineArray;
+  }, []);
+
+  return getAirportName[0];
+};
