@@ -178,6 +178,6 @@ export const getNameOfAirportFromAirportCodeInput = (airline, airportCode) => {
 
     return airlineArray;
   }, []);
-
-  return getAirportName[0];
+  console.log(getAirportName);
+  return getAirportName[1] || getAirportName[0];
 };
