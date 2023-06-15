@@ -71,17 +71,33 @@ export const getLengthOfAirlineCategory = (
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   const filteredData = getLengthOfAirlineCategory(arr, category, targetValue);
 
-  return createFilteredDataList(arr.name, filteredData).map(
-    airline => airline.name,
-  );
+  return createFilteredDataList(arr.name, filteredData).map(airline => (
+    <section>
+      <div
+        style={{ marginBottom: ".75rem" }}
+        key={airline._id}
+        className="text-center"
+      >
+        {airline.name}
+      </div>
+    </section>
+  ));
 };
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
   const filterByState = getLengthOfAirlineCategory(arr, category, targetValue);
   return createFilteredDataList(arr.name, filterByState).map(airline => (
-    <div style={{ display: filterByState === 0 ? "none" : "" }}>
-      {airline.name} - {airline.value}*
-    </div>
+    <section>
+      <div
+        style={{
+          marginBottom: ".75rem",
+        }}
+        className="text-center"
+        key={airline._id}
+      >
+        {airline.name} - {airline.value}*
+      </div>
+    </section>
   ));
 };
 
