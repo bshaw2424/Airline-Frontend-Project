@@ -55,8 +55,7 @@ export const airlineList = airlineArray => {
 };
 
 const createFilteredDataList = (name, value) => {
-  const dataList = [{ name, value }];
-  return dataList.filter(airline => airline.value !== 0);
+  return [{ name, value }].filter(airline => airline.value !== 0);
 };
 
 export const getLengthOfAirlineCategory = (
@@ -70,18 +69,9 @@ export const getLengthOfAirlineCategory = (
 
 export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   const filteredData = getLengthOfAirlineCategory(arr, category, targetValue);
-
-  return createFilteredDataList(arr.name, filteredData).map(airline => (
-    <section>
-      <div
-        style={{ marginBottom: ".75rem" }}
-        key={airline._id}
-        className="text-center"
-      >
-        {airline.name}
-      </div>
-    </section>
-  ));
+  return createFilteredDataList(arr.name, filteredData).map(
+    airline => airline.name,
+  );
 };
 
 export const getFilteredDataByState = (arr, category, targetValue) => {
