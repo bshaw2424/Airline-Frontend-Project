@@ -87,7 +87,7 @@ export const getFilteredDataByState = (arr, category, targetValue) => {
         }}
         key={airline._id}
       >
-        {airline.name} - {airline.value}*
+        {airline.name} - ({airline.value})*
       </div>
     </section>
   ));
