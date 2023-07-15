@@ -83,7 +83,7 @@ export const getFilteredDataByState = (arr, category, targetValue) => {
           marginBottom: ".75rem",
           fontSize: "1.2rem",
           fontWeight: "1",
-          paddingLeft: "25%",
+          paddingLeft: "20%",
         }}
         key={airline._id}
       >
