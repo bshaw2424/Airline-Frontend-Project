@@ -87,7 +87,10 @@ export const getFilteredDataByState = (arr, category, targetValue) => {
         }}
         key={airline._id}
       >
-        {airline.name} - ({airline.value})*
+        <a href="https://www.google.com" target="_blank" rel="noreferrer">
+          {airline.name} - ({airline.value})
+        </a>
+        *
       </div>
     </section>
   ));
