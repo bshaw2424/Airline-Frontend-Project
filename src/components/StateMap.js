@@ -1,37 +1,85 @@
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { stateAndCountryCoordinates } from "./StateCountryArrays";
+import { useEffect, useState } from "react";
 
-export default function StateMap({ displayMap, centerPointOfMap }) {
-  const filterfromUserInputToGetCoordinates = stateAndCountryCoordinates.filter(
-    a => a.name === centerPointOfMap,
-  );
+// import axios from "axios";
 
-  // get the center point of input State/Country
-  const centerOFMapCoordinates = {
-    lat: filterfromUserInputToGetCoordinates[0].lat,
-    lng: filterfromUserInputToGetCoordinates[0].lng,
+export default function StateMap({ centerPointOfMap }) {
+  const [coordinates, setCoordinates] = useState({});
+
+  useEffect(() => {
+    const filteredCoordinates = stateAndCountryCoordinates.filter(
+      destination => destination.name === centerPointOfMap,
+    );
+
+    if (filteredCoordinates.length > 0) {
+      const { lat, lng } = filteredCoordinates[0];
+      setCoordinates({ lat, lng });
+    }
+  }, [centerPointOfMap]);
+
+  // **** start here ***
+  // get array of airport codes based from state search input
+  // const [stateLocation, setStateLocation] = useState()
+  // useEffect(
+  //   () =>
+  //     async function getItems() {
+  //       const arr = [];
+  //       const filterToGetAirportName = displayMap.map(a =>
+  //         a.destinations
+  //           .filter(a => a.state === centerPointOfMap)
+  //           .map(a => a.airport_code),
+  //       );
+
+  //       for (const arrayOfAirportCodes of filterToGetAirportName) {
+  //         const first = arrayOfAirportCodes.map(a =>
+  //           axios.get(`https://api.api-ninjas.com/v1/airports?iata=${a}`, {
+  //             headers: {
+  //               "X-Api-Key": process.ENV.STATE_DATA_KEY,
+  //             },
+  //             contentType: "application/json",
+  //           }),
+  //         );
+  //         const responses = await axios.all(first);
+  //         arr.push(responses);
+  //       }
+
+  //       getItems();
+  //     },
+  //   [displayMap, centerPointOfMap],
+  // );
+
+  // async function getAirportCodeToDisplayMarker() {
+  //   const response = await axios.get(
+  //     `https://api.api-ninjas.com/v1/airports?iata=${filterToGetAirportName[0]}`,
+  //     {
+  //       headers: { "X-Api-Key": process.ENV.STATE_DATA_KEY },
+  //       contentType: "application/json",
+  //     },
+  //   );
+  //   const data = response.data[0];
+  //   console.log(data);
+  // }
+  // console.log(getAirportCodeToDisplayMarker());
+
+  // get the center point of State/Country
+
+  // const { lat, lng } = filteredCoordinates[0];
+  // console.log({ lat, lng });
+  const centerOFMapCoordinates = coordinates;
+
+  const sizeOfMapDisplayContainer = {
+    width: "970px",
+    height: "550px",
   };
 
-  const containerStyle = {
-    width: "900px",
-    height: "500px",
-  };
+  const api_key = process.env.REACT_APP_API_KEY;
+  console.log("key " + api_key);
 
-  const pdx = {
-    lat: 45.5883,
-    lng: -122.5944,
-  };
-
-  const eug = {
-    lat: 44.1218,
-    lng: -123.2159,
-  };
-
-  const API_KEY = process.env.GOOGLE_MAP_KEY;
-
+  // if map is loaded
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: API_KEY,
+    googleMapsApiKey: api_key,
   });
 
   return isLoaded ? (
@@ -42,7 +90,7 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
       }}
     >
       <GoogleMap
-        mapContainerStyle={containerStyle}
+        mapContainerStyle={sizeOfMapDisplayContainer}
         center={centerOFMapCoordinates}
         zoom={6}
         options={{
@@ -52,8 +100,7 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
           fullscreenControl: true,
         }}
       >
-        <Marker position={pdx} />
-        {/* <Marker position={eug} /> */}
+        <Marker />
       </GoogleMap>
     </div>
   ) : (
