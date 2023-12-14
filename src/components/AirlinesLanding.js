@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import AirlineStateSearch from "./AirlineStateSearch";
 import Airlines from "./Airlines";
@@ -19,59 +19,54 @@ import AirlineDisclaimer from "../component/AirlineDisclaimer";
 export default function AirlineLanding() {
   const airline = useLoaderData();
 
-  const scrollToMapRef = useRef(null);
-
-  const scrollToMap = () => {
-    scrollToMapRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
-  };
-
   // state management methods
   const [stateSearch, setStateSearch] = useState(false);
   const [airportCodeSearch, setAirportCodeSearch] = useState(false);
-  const [inputTextValue, setInputTextValue] = useState("");
   const [category, setCategory] = useState();
   const [formValue, setFormValue] = useState("");
   const [formSearch, setFormSearch] = useState(false);
   const [airlineTitle, setAirlineTitle] = useState();
   const [formCategory, setFormCategory] = useState();
   const [filterIcons, setFilterIcons] = useState();
-  const [changeIcon, setChangeIcon] = useState();
-  const [inputField, setInputField] = useState();
+  const [isScrolled, setIsStrolled] = useState(false);
+  const [formValues, setFormValues] = useState("");
+  const [selectOption, setSelectOption] = useState();
+  const [previousFormValue, setPreviousFormValue] = useState("");
 
-  const airlineSearch = e => {
-    e.preventDefault();
+  function handleOptionChange(e) {
+    setSelectOption(e.target.value);
+  }
+  function formChange(e) {
+    setFormValues(e.target.value);
+  }
 
-    // gets the input form value
-    let inputValue = e.target[1].value.toUpperCase();
+  const renderSearchComponent = () => {
+    if (selectOption === "state" && stateSearch) {
+      return (
+        <AirlineStateSearch
+          airlineSearch={airline}
+          airlineName={airlineTitle}
+          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+          isScrolled={isScrolled}
+          divDisplay={stateSearch === false ? "none" : null}
+        />
+      );
+    }
 
-    // gets the option value from the select input
-    let selectFormOptionvalue = e.target[0].value;
+    if (selectOption === "airport_code" && airportCodeSearch) {
+      return (
+        <AirlineListDisplay
+          airlineSearch={airline}
+          category={category}
+          displayMessage={airlineTitle}
+          targetCategoryValue={previousFormValue}
+        />
+      );
+    }
+  };
 
-    //setUserInput(inputValue);
-    setFormValue(inputValue);
-
-    // reset the form value after form submitted
-    setInputTextValue("");
-
-    setFilterIcons(selectFormOptionvalue);
-    // gets the category from data object ie airline["state"], airline["city"] etc...
-    setCategory(selectFormOptionvalue);
-
-    setChangeIcon(inputValue);
-
-    setInputField(selectFormOptionvalue);
-
-    const airlineLengthSearch = getNumberLengthOfSearch(
-      airline,
-      selectFormOptionvalue,
-      inputValue,
-    );
-
-    if (selectFormOptionvalue === "airport_code") {
+  const getMaps = (selectOptionItem, inputValue, airlineLengthSearch) => {
+    if (selectOptionItem === "airport_code") {
       setFormCategory("Airport Code");
       setFormValue(inputValue);
     } else {
@@ -79,10 +74,10 @@ export default function AirlineLanding() {
       setFormValue(upperCaseFirstLetterOfWord(inputValue));
     }
 
-    if (selectFormOptionvalue === "airport_code" && airlineLengthSearch !== 0) {
+    if (selectOptionItem === "airport_code" && airlineLengthSearch !== 0) {
       setAirportCodeSearch(true);
       setStateSearch(false);
-    } else if (selectFormOptionvalue === "state" && airlineLengthSearch !== 0) {
+    } else if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
       setStateSearch(true);
       setAirportCodeSearch(false);
     } else {
@@ -90,20 +85,57 @@ export default function AirlineLanding() {
       setFormSearch(false);
       setStateSearch(false);
     }
+  };
 
-    airlineLengthSearch === 0
+  const getAirlineStateAndNumberOfDestinations = (
+    airlineLength,
+    selectOption,
+    value,
+  ) => {
+    airlineLength === 0
       ? setAirlineTitle("")
       : setAirlineTitle(
-          `${airlineLengthSearch} of 10 airlines fly to ${
-            selectFormOptionvalue === "airport_code"
-              ? `${inputValue.toUpperCase()} - 
+          `${airlineLength} of 10 airlines fly to ${
+            selectOption === "airport_code"
+              ? `${value.toUpperCase()} - 
             ( ${getNameOfAirportFromAirportCodeInput(
               airline,
-              inputValue.toUpperCase(),
+              value.toUpperCase(),
             )} )`
-              : upperCaseFirstLetterOfWord(inputValue)
+              : upperCaseFirstLetterOfWord(value)
           }`,
         );
+  };
+
+  const airlineSearch = e => {
+    e.preventDefault();
+
+    setIsStrolled(true);
+
+    // Gets the value form the input form
+    let inputValue = formValues;
+
+    setPreviousFormValue(inputValue);
+    setFormValues("");
+
+    // gets the option value from the select input
+    let selectFormOptionvalue = selectOption;
+
+    setFilterIcons(selectFormOptionvalue);
+
+    const airlineLengthSearch = getNumberLengthOfSearch(
+      airline,
+      selectFormOptionvalue,
+      inputValue,
+    );
+
+    getMaps(selectFormOptionvalue, inputValue, airlineLengthSearch);
+
+    getAirlineStateAndNumberOfDestinations(
+      airlineLengthSearch,
+      selectOption,
+      inputValue,
+    );
 
     !displayMessageIfSearchInputNotFound(
       airline,
@@ -125,51 +157,31 @@ export default function AirlineLanding() {
     };
   }, [formSearch]);
 
-  const clearInputFieldAfterFormSubmit = e => {
-    setInputTextValue(e.target.value);
-    setFormSearch(false);
-    setChangeIcon(false);
-  };
-
   return (
-    <main className="container">
+    <main className="">
       <Form
         onSubmit={e => airlineSearch(e)}
-        onChange={e => clearInputFieldAfterFormSubmit(e)}
-        onClick={() => scrollToMap()}
-        value={inputTextValue}
+        airlineLinks={
+          <Airlines
+            targetInput={formValue.toUpperCase()}
+            showIconForAirportCode={filterIcons}
+          />
+        }
+        handleOptionChange={e => handleOptionChange(e)}
+        formChange={e => formChange(e)}
+        formValue={formValues}
       />
 
-      {formSearch && (
-        <Error
-          message={`${formValue} is not a valid ${formCategory}`}
-          messageDiv={formSearch === false ? "none" : null}
-        />
-      )}
-      <Airlines
-        targetInput={formValue.toUpperCase()}
-        showIconForAirportCode={filterIcons}
-      />
-      <section>
-        {stateSearch && (
-          <AirlineStateSearch
-            airlineSearch={airline}
-            airlineName={airlineTitle}
-            targetCategoryValue={upperCaseFirstLetterOfWord(formValue)}
-            mapref={scrollToMapRef}
-            divDisplay={stateSearch === false ? "none" : null}
+      <section class="container">
+        {formSearch && (
+          <Error
+            message={`${formValue} is not a valid ${formCategory}`}
+            messageDiv={formSearch === false ? "none" : null}
           />
         )}
-        {airportCodeSearch && (
-          <AirlineListDisplay
-            airlineSearch={airline}
-            category={category}
-            displayMessage={airlineTitle}
-            targetCategoryValue={formValue.toUpperCase()}
-          />
-        )}
+        {renderSearchComponent()}
+        <AirlineDisclaimer />
       </section>
-      <AirlineDisclaimer />
     </main>
   );
 }
