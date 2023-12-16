@@ -1,20 +1,15 @@
-import { useState } from "react";
 import AirlineQuickSearch from "./AirlineQuickSearch";
 
 import Button from "./Button";
 import SelectMenu from "./SelectMenu";
-import AirlineStateSearch from "./AirlineStateSearch";
 
-export default function Form({ onSubmit, airlineLinks, state }) {
-  const [formValue, setFormValue] = useState("");
-  const [selectOption, setSelectOption] = useState();
-
-  function handleOptionChange(e) {
-    setSelectOption(e.target.value);
-  }
-  function formChange(e) {
-    setFormValue(e.target.value);
-  }
+export default function Form({
+  onSubmit,
+  airlineLinks,
+  handleOptionChange,
+  formValue,
+  formChange,
+}) {
   return (
     <>
       <div
@@ -23,17 +18,14 @@ export default function Form({ onSubmit, airlineLinks, state }) {
           position: "sticky",
           top: 0,
           zIndex: 1,
-          background: "#fff",
+          background: "rgba(255,255,255, 0.4)",
         }}
       >
         <form onSubmit={onSubmit} className="py-2">
           <div className="row d-flex justify-content-center">
             {/* select dropdown menu to choose between state or airport code */}
-            <SelectMenu onChange={e => handleOptionChange(e)} />
-            <AirlineQuickSearch
-              value={formValue}
-              onChange={e => formChange(e)}
-            />
+            <SelectMenu onChange={handleOptionChange} />
+            <AirlineQuickSearch value={formValue} onChange={formChange} />
             <div className="col-sm-3" style={{ width: "10%" }}>
               <Button
                 buttonType="submit"
@@ -47,7 +39,6 @@ export default function Form({ onSubmit, airlineLinks, state }) {
         </form>
       </div>
       {airlineLinks}
-      {selectOption === "state" && state}
     </>
   );
 }
