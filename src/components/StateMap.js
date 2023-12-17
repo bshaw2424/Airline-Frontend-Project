@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // import axios from "axios";
 
-export default function StateMap({ centerPointOfMap }) {
+export default function StateMap({ displayMap, centerPointOfMap }) {
   const [coordinates, setCoordinates] = useState({});
 
   useEffect(() => {
@@ -17,6 +17,28 @@ export default function StateMap({ centerPointOfMap }) {
       setCoordinates({ lat, lng });
     }
   }, [centerPointOfMap]);
+
+  // const filterToGetAirportName = displayMap.map(a =>
+  //   a.destinations
+  //     .filter(a => a.state === centerPointOfMap)
+  //     .map(a => ({ city: a.city, code: a.airport_code })),
+  // );
+  const [name, setName] = useState([]);
+  useEffect(() => {
+    function getNames() {
+      const airlines = displayMap.map(a => ({
+        name: a.name,
+        codes: a.destinations
+          .filter(a => a.state === centerPointOfMap)
+          .map(a => a.airport_code),
+      }));
+      setName(airlines);
+    }
+
+    getNames();
+  }, [centerPointOfMap, displayMap]);
+
+  // console.log(filterToGetAirportName);
 
   // **** start here ***
   // get array of airport codes based from state search input
@@ -60,13 +82,8 @@ export default function StateMap({ centerPointOfMap }) {
   //   const data = response.data[0];
   //   console.log(data);
   // }
-  // console.log(getAirportCodeToDisplayMarker());
 
-  // get the center point of State/Country
-
-  // const { lat, lng } = filteredCoordinates[0];
-  // console.log({ lat, lng });
-  const centerOFMapCoordinates = coordinates;
+  const centerOfMapCoordinates = coordinates;
 
   const sizeOfMapDisplayContainer = {
     width: "970px",
@@ -74,7 +91,6 @@ export default function StateMap({ centerPointOfMap }) {
   };
 
   const api_key = process.env.REACT_APP_API_KEY;
-  console.log("key " + api_key);
 
   // if map is loaded
   const { isLoaded } = useJsApiLoader({
@@ -89,18 +105,27 @@ export default function StateMap({ centerPointOfMap }) {
         height: "100%",
       }}
     >
+      {name
+        .filter(a => a.codes.length > 0)
+        .map((a, i) => {
+          return (
+            <div key={i}>
+              {a.name} - {a.codes.join("  ")}
+            </div>
+          );
+        })}
       <GoogleMap
         mapContainerStyle={sizeOfMapDisplayContainer}
-        center={centerOFMapCoordinates}
+        center={centerOfMapCoordinates}
         zoom={6}
         options={{
           zoomControl: false,
-          streetView: false,
+          streetView: true,
           mapTypeControl: false,
           fullscreenControl: true,
         }}
       >
-        <Marker />
+        <Marker lat={"33.4352"} lng={"112.0101"} />
       </GoogleMap>
     </div>
   ) : (
