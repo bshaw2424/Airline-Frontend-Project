@@ -1,4 +1,9 @@
-import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  MarkerF,
+  Marker,
+} from "@react-google-maps/api";
 import { stateAndCountryCoordinates } from "./StateCountryArrays";
 import { useEffect, useState } from "react";
 
@@ -92,6 +97,10 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
 
   const api_key = process.env.REACT_APP_API_KEY;
 
+  const markerCoordinates = { lat: 33.434299469, lng: -112.0120010376 };
+  const pmg = { lat: 33.30780029, lng: -111.6549988 };
+  const tucson = { lat: 32.2989997864, lng: -111.3170013428 };
+
   // if map is loaded
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -120,12 +129,17 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
         zoom={6}
         options={{
           zoomControl: false,
-          streetView: true,
+          streetView: false,
           mapTypeControl: false,
           fullscreenControl: true,
         }}
       >
-        <Marker lat={"33.4352"} lng={"112.0101"} />
+        <MarkerF
+          position={markerCoordinates}
+          title="Phoenix Sky Harbor Airport"
+        />
+        <MarkerF position={pmg} />
+        <MarkerF position={tucson} />
       </GoogleMap>
     </div>
   ) : (
