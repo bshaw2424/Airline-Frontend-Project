@@ -18,7 +18,7 @@ export default function Form({
           position: "sticky",
           top: 0,
           zIndex: 1,
-          background: "rgba(255,255,255, 0.4)",
+          background: "rgba(255,255,255, 0.6)",
         }}
       >
         <form onSubmit={onSubmit} className="py-2">
