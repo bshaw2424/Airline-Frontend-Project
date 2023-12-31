@@ -8,6 +8,24 @@ import { useEffect, useState } from "react";
 export default function StateMap({ displayMap, centerPointOfMap }) {
   const [coordinates, setCoordinates] = useState({});
   const [stateLocation, setStateLocation] = useState();
+  const [main, setMain] = useState();
+  const apiKey = "YD07ub+l4kuNqmk2vsP5vg==i0tJXQxsPIm8k20l";
+
+  const getCoordinates = async airportCode => {
+    try {
+      const response = await axios.get(
+        `https://api.api-ninjas.com/v1/airports?iata=${airportCode}`,
+        {
+          headers: { "X-Api-Key": apiKey },
+        },
+      );
+      const { latitude, longitude } = await response.data;
+      return { lat: latitude, lng: longitude };
+    } catch (error) {
+      console.error(`Error fetching coordinates for ${airportCode}:`, error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const filteredCoordinates = stateAndCountryCoordinates.filter(
@@ -26,23 +44,27 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
   useEffect(() => {
     const getItems = async () => {
       try {
-        const arrayOfAirportCodes = displayMap.flatMap(item =>
+        const arrayOfAirportCodes = displayMap.map(item =>
           item.destinations
             .filter(destination => destination.state === centerPointOfMap)
             .map(destination => destination.airport_code),
         );
+        const getMain = arrayOfAirportCodes.flatMap(codes => {
+          return codes.map(coords => coords);
+        });
+        const great = [...new Set(getMain)];
+        const coordinates = arrayOfAirportCodes.map(code => {
+          return code.map(coord => coord);
+        });
 
-        const urls = arrayOfAirportCodes.map(
-          code => `https://api.api-ninjas.com/v1/airports?iata=${code}`,
-        );
-
-        console.log(urls);
-
-        // Do something with the URLs if needed
-
-        // setStateLocation(arrayOfAirportCodes);
+        const results = great.map(a => ({
+          name: a,
+          coords: `https://api.api-ninjas.com/v1/airports?iata=${a}`,
+        }));
+        setMain(results);
+        setStateLocation(coordinates);
       } catch (error) {
-        console.log(error);
+        console.log("there was a error " + error);
       }
     };
 
@@ -71,7 +93,28 @@ export default function StateMap({ displayMap, centerPointOfMap }) {
         height: "100%",
       }}
     >
-      {stateLocation.map(state => state.lat)}
+      <div style={{ outline: "1px solid blue", padding: "1rem " }}>
+        {stateLocation
+          .filter(a => a.length > 0)
+          .map(a => (
+            <div
+              style={{
+                outline: "2px solid red",
+                padding: "1rem",
+                marginBottom: "1rem",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {a}
+            </div>
+          ))}
+      </div>
+      {main.map(a => (
+        <div>
+          {a.name} - {a.coords}
+        </div>
+      ))}
       <GoogleMap
         mapContainerStyle={sizeOfMapDisplayContainer}
         center={centerOfMapCoordinates}
