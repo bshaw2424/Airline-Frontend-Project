@@ -11,14 +11,23 @@ export default function Airlines({ targetInput, showIconForAirportCode }) {
     const list = [];
     const activeList = [];
 
-    const a = airlineData.map(a => a.name);
-    const b = airlineData.map(
-      a => a.destinations.filter(a => a.airport_code === targetInput).length,
-    );
+    // const array_of_airline_names = airlineData.map(a => a.name);
 
-    for (let i = 0; i < b.length; i++) {
-      list.push({ name: a[i], length: b[i] });
-      activeList.push({ name: a[i], active: false });
+    // const b = airlineData.map(
+    //   a => a.destinations.filter(a => a.airport_code === targetInput).length,
+    // );
+
+    // for (let item of b) {
+    //   list.push({ name: array_of_airline_names[item], length: b[item] });
+    //   activeList.push({ name: array_of_airline_names[item], active: false });
+    // }
+    for (const airline of airlineData) {
+      const destinationsLength = airline.destinations.filter(
+        destination => destination.airport_code === targetInput,
+      ).length;
+
+      list.push({ name: airline.name, length: destinationsLength });
+      activeList.push({ name: airline.name, active: false });
     }
 
     const able = list.filter(a => a.length > 0).map(a => a.name);
