@@ -36,6 +36,7 @@ export default function AirlineLanding() {
   function handleOptionChange(e) {
     setSelectOption(e.target.value);
   }
+
   function formChange(e) {
     setFormValues(e.target.value);
   }
@@ -70,7 +71,7 @@ export default function AirlineLanding() {
       setFormCategory("Airport Code");
       setFormValue(inputValue);
     } else {
-      setFormCategory("State or Country");
+      setFormCategory("State");
       setFormValue(upperCaseFirstLetterOfWord(inputValue));
     }
 
