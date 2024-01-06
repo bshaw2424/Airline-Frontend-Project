@@ -1,20 +1,28 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+
+import AirlineStateSearch from "./AirlineStateSearch";
+// import AirlineAirportCodeSearch from "./AirlineAirportCodeSearch";
 
 export default function AirlineSearch() {
   const AirlineSearch = useLoaderData();
 
   return (
-    <div>
-      {AirlineSearch.map(a => (
-        <>
-          <div>
-            <strong>{a.name}</strong> - ssd{" "}
-            {a.destinations.filter(a => a.seasonal === "true").length}
-          </div>
-        </>
-      ))}
+    <div
+      className="container mt-5 d-flex justify-content-between"
+      style={{ minHeight: "100vh" }}
+    >
+      {/* <AirlineAirportCodeSearch
+        airportCodeSearch={AirlineSearch}
+        codeCategory="airport_code"
+        targetCode="PWM"
+      /> */}
+      <h1 style={{ fontSize: "6rem" }}>Hello world</h1>
+      <AirlineStateSearch
+        airlineStateSearch={AirlineSearch}
+        category="state"
+        targetState="California"
+      />
     </div>
   );
 }
