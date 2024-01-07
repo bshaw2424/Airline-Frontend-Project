@@ -74,8 +74,10 @@ export const getFilteredAirportCodeOrCity = (arr, category, targetValue) => {
   );
 };
 
-export const getFilteredDataByState = (arr, category, targetValue) => {
-  const filterByState = getLengthOfAirlineCategory(arr, category, targetValue);
+export const getFilteredDataByState = (arr, category, airlineCity) => {
+  const filterByState = arr.destinations
+    .filter(airline => airline[category] === airlineCity)
+    .map(a => a.name).length;
   return createFilteredDataList(arr.name, filterByState).map(airline => (
     <section>
       <div
@@ -193,4 +195,110 @@ export const getNameOfAirportFromAirportCodeInput = (airline, airportCode) => {
   }, []);
   console.log(getAirportName);
   return getAirportName[1] || getAirportName[0];
+};
+
+const getHawaiiIcaoCodes = getIcao => {
+  switch (getIcao) {
+    case "HNL":
+      return "PHNL";
+    case "OGG":
+      return "PHOG";
+    case "KOA":
+      return "PHKO";
+    case "ITO":
+      return "PHTO";
+    case "LIH":
+      return "PHLI";
+    default:
+      return null;
+  }
+};
+
+const getAlaskaIcaoCodes = getIcao => {
+  switch (getIcao) {
+    case "ANC":
+      return "PANC";
+    case "FAI":
+      return "PAFA";
+    case "ADK":
+      return "PADK";
+    case "BET":
+      return "PABE";
+    case "PACD":
+      return "PACD";
+    case "CDV":
+      return "PACV";
+    case "SCC":
+      return "PASC";
+    case "DLG":
+      return "PADL";
+    case "DUT":
+      return "PADU";
+    case "GST":
+      return "PAGS";
+    case "JNU":
+      return "PAJN";
+    case "KTN":
+      return "PAKT";
+    case "AKN":
+      return "PAKN";
+    case "ADQ":
+      return "PADQ";
+    case "OTZ":
+      return "PAOT";
+    case "OME":
+      return "PAOM";
+    case "PSG":
+      return "PAPG";
+    case "SIT":
+      return "PASI";
+    case "BRW":
+      return "PABR";
+    case "WRG":
+      return "PAWG";
+    case "YAK":
+      return "PAYA";
+    default:
+      return null;
+  }
+};
+
+const changePuertoRicoToIcaoCode = (codePrefix, airlineCode) => {
+  const getFirstTwoLettersOfAirportCode = airlineCode.slice(0, 2);
+
+  const IcaoCode = [
+    ...new Set(`${codePrefix}${getFirstTwoLettersOfAirportCode}`),
+  ];
+
+  return IcaoCode.join("");
+};
+
+export const changeAirportCodeToIcaoCode = (destination, airportCodeArray) => {
+  switch (destination) {
+    case "hawaii":
+      return airportCodeArray.map(icao =>
+        icao.map(convertToIcaoAirportCode =>
+          getHawaiiIcaoCodes(convertToIcaoAirportCode),
+        ),
+      );
+    // case "alaska":
+    //   return airportCodeArray.map(icao =>
+    //     icao.map(convertToIcaoAirportCode =>
+    //       getAlaskaIcaoCodes(convertToIcaoAirportCode),
+    //     ),
+    //   );
+    // case "puerto rico":
+    //   return airportCodeArray.map(icao =>
+    //     icao.map(convertPuertoRicoAirportCodeToIcaoCode =>
+    //       changePuertoRicoToIcaoCode("TJ", convertPuertoRicoAirportCodeToIcaoCode),
+    //     ),
+    //   );
+    default:
+      return destination.map(domesticDestinatons =>
+        domesticDestinatons.map(
+          convertToMainLandIcaoAirportCode =>
+            `K${convertToMainLandIcaoAirportCode}`,
+        ),
+      );
+  }
 };
