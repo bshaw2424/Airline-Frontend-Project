@@ -197,8 +197,8 @@ export const getNameOfAirportFromAirportCodeInput = (airline, airportCode) => {
   return getAirportName[1] || getAirportName[0];
 };
 
-const getHawaiiIcaoCodes = getIcao => {
-  switch (getIcao) {
+const getDomesticIcaoCodes = getIcaoCodeFromIataCode => {
+  switch (getIcaoCodeFromIataCode) {
     case "HNL":
       return "PHNL";
     case "OGG":
@@ -209,13 +209,6 @@ const getHawaiiIcaoCodes = getIcao => {
       return "PHTO";
     case "LIH":
       return "PHLI";
-    default:
-      return null;
-  }
-};
-
-const getAlaskaIcaoCodes = getIcao => {
-  switch (getIcao) {
     case "ANC":
       return "PANC";
     case "FAI":
@@ -224,7 +217,7 @@ const getAlaskaIcaoCodes = getIcao => {
       return "PADK";
     case "BET":
       return "PABE";
-    case "PACD":
+    case "CDB":
       return "PACD";
     case "CDV":
       return "PACV";
@@ -258,47 +251,29 @@ const getAlaskaIcaoCodes = getIcao => {
       return "PAWG";
     case "YAK":
       return "PAYA";
+    case "AZA":
+      return "KIWA";
+    case "YUM":
+      return "KNYL";
+    case "BQN":
+      return "TJBQ";
+    case "SJU":
+      return "TJSJ";
+    case "PSE":
+      return "TJPS";
+    case "BKG":
+      return "KBBG";
+    case "FCA":
+      return "KGPI";
+    case "USA":
+      return "KJQF";
+    case "PPG":
+      return "NSTU";
     default:
-      return null;
+      return `K${getIcaoCodeFromIataCode}`;
   }
 };
 
-const changePuertoRicoToIcaoCode = (codePrefix, airlineCode) => {
-  const getFirstTwoLettersOfAirportCode = airlineCode.slice(0, 2);
-
-  const IcaoCode = [
-    ...new Set(`${codePrefix}${getFirstTwoLettersOfAirportCode}`),
-  ];
-
-  return IcaoCode.join("");
-};
-
-export const changeAirportCodeToIcaoCode = (destination, airportCodeArray) => {
-  switch (destination) {
-    case "hawaii":
-      return airportCodeArray.map(icao =>
-        icao.map(convertToIcaoAirportCode =>
-          getHawaiiIcaoCodes(convertToIcaoAirportCode),
-        ),
-      );
-    // case "alaska":
-    //   return airportCodeArray.map(icao =>
-    //     icao.map(convertToIcaoAirportCode =>
-    //       getAlaskaIcaoCodes(convertToIcaoAirportCode),
-    //     ),
-    //   );
-    // case "puerto rico":
-    //   return airportCodeArray.map(icao =>
-    //     icao.map(convertPuertoRicoAirportCodeToIcaoCode =>
-    //       changePuertoRicoToIcaoCode("TJ", convertPuertoRicoAirportCodeToIcaoCode),
-    //     ),
-    //   );
-    default:
-      return destination.map(domesticDestinatons =>
-        domesticDestinatons.map(
-          convertToMainLandIcaoAirportCode =>
-            `K${convertToMainLandIcaoAirportCode}`,
-        ),
-      );
-  }
+export const changeAirportCodeToIcaoCode = destinationAirportCode => {
+  return getDomesticIcaoCodes(destinationAirportCode);
 };
