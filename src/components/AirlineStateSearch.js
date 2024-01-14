@@ -1,7 +1,7 @@
-import { getFilteredDataByState } from "../Utilities";
 import React, { useEffect } from "react";
 import DisclaimerMessage from "./DisclaimerMessage";
 import StateMap from "./StateMap";
+import StateList from "./StateList";
 
 export default function AirlineStateSearch({
   airlineSearch,
@@ -15,25 +15,37 @@ export default function AirlineStateSearch({
 
       if (element) {
         element.scrollIntoView({
+          alignToTop: true,
           behavior: "smooth",
-          block: "nearest",
-          inline: "center",
         });
       }
     }
   }, [isScrolled]);
 
+  const getListOfDestinations = airlineSearch
+    .map(getDestination => ({
+      name: getDestination.name,
+      codes: getDestination.destinations
+        .filter(location => location.state === targetCategoryValue)
+        .map(location => location.airport_code),
+    }))
+    .filter(listItem => listItem.codes.length !== 0)
+    .reduce((acc, a) => {
+      acc[a.name] = false;
+      return acc;
+    }, {});
+
   return (
-    <article id="stateDestinationMap" style={{ paddingTop: "4rem" }}>
-      <div>
-        <div className="d-flex justify-content-evenly ">
-          <div style={{ height: "100%", width: "100%" }}>
-            {airlineSearch.map(airline => (
-              <>
-                {getFilteredDataByState(airline, "state", targetCategoryValue)}
-              </>
-            ))}
-          </div>
+    <article className="mt-5">
+      <div id="stateDestinationMap">
+        <div className="d-flex justify-content-evenly">
+          <StateList
+            dataList={airlineSearch}
+            searchValue={targetCategoryValue}
+            objectState={getListOfDestinations}
+          />
+
+          {/*  SHOWS CENTER POINT OF STATE USED INPUT */}
           <StateMap
             displayMap={airlineSearch}
             centerPointOfMap={targetCategoryValue}
