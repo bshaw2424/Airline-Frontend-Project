@@ -1,8 +1,18 @@
-import React, { useState } from "react";
-import { changeAirportCodeToIcaoCode } from "../Utilities";
+import React, { useState, useEffect } from "react";
+import { MarkerF } from "@react-google-maps/api";
+import {
+  changeAirportCodeToIcaoCode,
+  axiosCallToLatitudeAndLongitudeCoordinates,
+  getUniqueListOfAirportCodes,
+} from "../Utilities";
+import StateMap from "./StateMap";
 
 export default function StateList({ dataList, searchValue, objectState }) {
   const [getActiveState, setActiveState] = useState(objectState);
+
+  useEffect(() => {
+    axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
+  }, [searchValue]);
 
   const handleStateClick = airlineName => {
     setActiveState(prevState => ({
@@ -13,12 +23,21 @@ export default function StateList({ dataList, searchValue, objectState }) {
     }));
   };
 
-  const getListOfAirlines = dataList
+  const getListOfAirlinesObject = dataList
     .map(state => ({
+      // airline name
       name: state.name,
       codes: state.destinations
         .filter(location => location.state === searchValue)
-        .map(location => changeAirportCodeToIcaoCode(location.airport_code)),
+        // get object of ICAO airport codes and corresponding airport name
+        .reduce((createObjectOfAirportCodeAndName, items) => {
+          createObjectOfAirportCodeAndName.push({
+            code: changeAirportCodeToIcaoCode(items.airport_code),
+            airport: items.airport_name,
+          });
+          return createObjectOfAirportCodeAndName;
+        }, []),
+      // length of destinations within the targeted state search (ex... Arizona)
       length: state.destinations
         .filter(
           location =>
@@ -29,16 +48,20 @@ export default function StateList({ dataList, searchValue, objectState }) {
     }))
     .filter(listItem => listItem.codes.length !== 0);
 
+  const un = getListOfAirlinesObject.flatMap(i => i.codes.map(i => i.code));
+  const unique = [...new Set(un)];
+
   return (
     <div
       style={{
         height: "100%",
         width: "100%",
         fontSize: "1.2rem",
+        display: "flex",
       }}
     >
       <ul style={{ listStyle: "none" }}>
-        {getListOfAirlines.map((airline, index) => (
+        {getListOfAirlinesObject.map((airline, index) => (
           <li
             key={`${airline.name}-${index}`}
             className={`ps-4 py-1 me-5 ${
@@ -50,6 +73,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
           </li>
         ))}
       </ul>
+      <StateMap displayMap={dataList} centerPointOfMap={searchValue}></StateMap>
     </div>
   );
 }
