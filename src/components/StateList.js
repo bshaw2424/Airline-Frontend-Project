@@ -9,6 +9,7 @@ import StateMap from "./StateMap";
 
 export default function StateList({ dataList, searchValue, objectState }) {
   const [getActiveState, setActiveState] = useState(objectState);
+  const [coords, setCoords] = useState();
 
   useEffect(() => {
     axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
@@ -21,6 +22,8 @@ export default function StateList({ dataList, searchValue, objectState }) {
       ),
       [airlineName]: true,
     }));
+    console.log(coords.map(a => a.map(a => a))[2]);
+    console.log(getActiveState);
   };
 
   const getListOfAirlinesObject = dataList
@@ -48,8 +51,74 @@ export default function StateList({ dataList, searchValue, objectState }) {
     }))
     .filter(listItem => listItem.codes.length !== 0);
 
-  const un = getListOfAirlinesObject.flatMap(i => i.codes.map(i => i.code));
-  const unique = [...new Set(un)];
+  useEffect(() => {
+    const getCoordinates = async () => {
+      try {
+        const getListOfAirlinesObject = dataList
+          .map(state => ({
+            // airline name
+            name: state.name,
+            codes: state.destinations
+              .filter(location => location.state === searchValue)
+              // get object of ICAO airport codes and corresponding airport name
+              .reduce((createObjectOfAirportCodeAndName, items) => {
+                createObjectOfAirportCodeAndName.push({
+                  code: changeAirportCodeToIcaoCode(items.airport_code),
+                  airport: items.airport_name,
+                });
+                return createObjectOfAirportCodeAndName;
+              }, []),
+            // length of destinations within the targeted state search (ex... Arizona)
+            length: state.destinations
+              .filter(
+                location =>
+                  location.state === searchValue &&
+                  location.international === "false",
+              )
+              .map(location => location.airport_code).length,
+          }))
+          .filter(listItem => listItem.codes.length !== 0);
+
+        const dataResultsObjectWithNameAndCoordinates = await Promise.all(
+          getUniqueListOfAirportCodes(getListOfAirlinesObject).map(
+            async locationNameAndCoordinates => {
+              const getLatitudeLongitudeCoordinatesFromAPI =
+                await axiosCallToLatitudeAndLongitudeCoordinates(
+                  locationNameAndCoordinates,
+                );
+
+              return {
+                name: locationNameAndCoordinates,
+                coordinates: getLatitudeLongitudeCoordinatesFromAPI,
+              };
+            },
+          ),
+        );
+        console.log(dataResultsObjectWithNameAndCoordinates);
+
+        // puts the lat and lng coordinates in a object
+        const compareListToFindMatchingCodes = getListOfAirlinesObject.map(
+          coords =>
+            coords.codes.map(matchingName => {
+              const findMatchingName =
+                dataResultsObjectWithNameAndCoordinates.find(
+                  object => object.name === matchingName.code,
+                );
+              return findMatchingName
+                ? {
+                    location: findMatchingName.coordinates,
+                    title: matchingName.airport,
+                  }
+                : matchingName;
+            }),
+        );
+        setCoords(compareListToFindMatchingCodes);
+      } catch (error) {
+        console.log("there was a error " + error);
+      }
+    };
+    getCoordinates();
+  }, [dataList, searchValue]);
 
   return (
     <div
