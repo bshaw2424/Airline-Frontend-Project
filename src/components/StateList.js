@@ -10,6 +10,8 @@ import StateMap from "./StateMap";
 export default function StateList({ dataList, searchValue, objectState }) {
   const [getActiveState, setActiveState] = useState(objectState);
   const [coords, setCoords] = useState();
+  const [airlineNameList, setAirlineNameList] = useState();
+  const [markerData, setMarkerData] = useState();
 
   useEffect(() => {
     axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
@@ -22,8 +24,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
       ),
       [airlineName]: true,
     }));
-    console.log(coords.map(a => a.map(a => a))[2]);
-    console.log(getActiveState);
+    getCoordinatesAndTitleToAddToMap(airlineName);
   };
 
   const getListOfAirlinesObject = dataList
@@ -94,7 +95,6 @@ export default function StateList({ dataList, searchValue, objectState }) {
             },
           ),
         );
-        console.log(dataResultsObjectWithNameAndCoordinates);
 
         // puts the lat and lng coordinates in a object
         const compareListToFindMatchingCodes = getListOfAirlinesObject.map(
@@ -112,6 +112,10 @@ export default function StateList({ dataList, searchValue, objectState }) {
                 : matchingName;
             }),
         );
+
+        const getListOfAirlineNames = getListOfAirlinesObject.map(a => a.name);
+        setAirlineNameList(getListOfAirlineNames);
+
         setCoords(compareListToFindMatchingCodes);
       } catch (error) {
         console.log("there was a error " + error);
@@ -119,6 +123,22 @@ export default function StateList({ dataList, searchValue, objectState }) {
     };
     getCoordinates();
   }, [dataList, searchValue]);
+
+  const getCoordinatesAndTitleToAddToMap = airlineName => {
+    const indexOfClickedAirlineName = airlineNameList.findIndex(
+      name => name === airlineName,
+    );
+    const getMapPositionCoordinates = coords[indexOfClickedAirlineName].map(
+      a => {
+        const {
+          location: { lat, lng },
+          title,
+        } = a;
+        return { lat: +lat, lng: +lng, title };
+      },
+    );
+    return setMarkerData(getMapPositionCoordinates);
+  };
 
   return (
     <div
@@ -142,7 +162,9 @@ export default function StateList({ dataList, searchValue, objectState }) {
           </li>
         ))}
       </ul>
-      <StateMap displayMap={dataList} centerPointOfMap={searchValue}></StateMap>
+      <StateMap displayMap={dataList} centerPointOfMap={searchValue}>
+        <MarkerF position={{ ...markerData }} />
+      </StateMap>
     </div>
   );
 }
