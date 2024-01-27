@@ -24,26 +24,33 @@ export default function AirlineLanding() {
   const [stateSearch, setStateSearch] = useState(false);
   const [internationalSearch, setInternationalSearch] = useState(false);
   const [airportCodeSearch, setAirportCodeSearch] = useState(false);
-  // const [category, setCategory] = useState();
-  const [formValue, setFormValue] = useState("");
   const [formSearch, setFormSearch] = useState(false);
   const [airlineTitle, setAirlineTitle] = useState();
   const [formCategory, setFormCategory] = useState();
-  const [filterIcons, setFilterIcons] = useState();
+
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState();
+  const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
 
   // gets the value from the select element
   function handleOptionChange(e) {
     setSelectOption(e.target.value);
+    if (e.target.value !== "airport_code") {
+      setAirportCodeSearch("");
+      setFilterIcons("");
+    }
+    if (e.target.value !== "state") {
+      setStateSearch(false);
+    }
   }
 
   function formChange(e) {
     setFormValues(e.target.value);
   }
 
+  // main components that get rendered
   const renderSearchComponent = () => {
     if (selectOption === "state" && stateSearch) {
       return (
@@ -69,7 +76,11 @@ export default function AirlineLanding() {
     }
 
     if (selectOption === "airport_code" && airportCodeSearch) {
-      return <AirlineListDisplay displayMessage={airlineTitle} />;
+      return (
+        <>
+          <AirlineListDisplay displayMessage={airlineTitle} />
+        </>
+      );
     }
   };
 
@@ -78,23 +89,23 @@ export default function AirlineLanding() {
       setAirportCodeSearch(true);
       setStateSearch(false);
       setInternationalSearch(false);
-    } else if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
+    }
+    if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
       setStateSearch(true);
       setAirportCodeSearch(false);
       setInternationalSearch(false);
-    } else if (
-      selectOptionItem === "international" &&
-      airlineLengthSearch !== 0
-    ) {
+    }
+    if (selectOptionItem === "international" && airlineLengthSearch !== 0) {
       setInternationalSearch(true);
       setStateSearch(false);
       setAirportCodeSearch(false);
-    } else {
-      setAirportCodeSearch(false);
-      setInternationalSearch(false);
-      setFormSearch(false);
-      setStateSearch(false);
     }
+    // else {
+    //   setAirportCodeSearch(false);
+    //   setInternationalSearch(false);
+    //   setFormSearch(false);
+    //   setStateSearch(false);
+    // }
   };
 
   const getAirlineStateAndNumberOfDestinations = (
@@ -132,7 +143,12 @@ export default function AirlineLanding() {
 
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
-    // setFormValues("");
+    setFormCategory(
+      htmlSelectElementOptionValue !== "airport_code"
+        ? "State"
+        : "airport code",
+    );
+    setFormValues("");
 
     const getLengthOfTotalAirlinesFromReturnedSubmit = getNumberLengthOfSearch(
       getAirlineDataFromLoader,
@@ -142,7 +158,6 @@ export default function AirlineLanding() {
 
     getMaps(
       htmlSelectElementOptionValue,
-      inputValueSubmittedFromForm,
       getLengthOfTotalAirlinesFromReturnedSubmit,
     );
 
@@ -179,7 +194,7 @@ export default function AirlineLanding() {
         // gets the thumbs up icons and text indicator for the airport code search (i.e. BNA)
         airlineLinks={
           <Airlines
-            targetInput={formValue.toUpperCase()}
+            targetInput={previousFormValue.toUpperCase()}
             showIconForAirportCode={filterIcons}
           />
         }
@@ -191,7 +206,7 @@ export default function AirlineLanding() {
       <section className="container">
         {formSearch && (
           <Error
-            message={`${formValue} is not a valid ${formCategory}`}
+            message={`${previousFormValue.toUpperCase()} is not a valid ${formCategory}`}
             messageDiv={formSearch === false ? "none" : null}
           />
         )}
