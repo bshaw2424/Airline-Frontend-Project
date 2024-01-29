@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Marker, InfoWindow } from "@react-google-maps/api";
+import { Marker } from "@react-google-maps/api";
+import { axiosCallToLatitudeAndLongitudeCoordinates } from "./AirportAxiosQuery";
 import {
-  changeAirportCodeToIcaoCode,
-  axiosCallToLatitudeAndLongitudeCoordinates,
   getUniqueListOfAirportCodes,
+  changeAirportCodeToIcaoCode,
 } from "../Utilities";
 import StateMap from "./StateMap";
 
@@ -32,17 +32,18 @@ export default function StateList({ dataList, searchValue, objectState }) {
         .map(location => location.airport_code).length,
     }))
     .filter(listItem => listItem.codes.length !== 0);
-
   const [getActiveState, setActiveState] = useState(objectState);
-  const [airlineObjectData] = useState(getListOfAirlinesObject);
   const [coords, setCoords] = useState();
   const [airlineNameList, setAirlineNameList] = useState();
+  const [airlineObjectData] = useState(getListOfAirlinesObject);
   const [airlineIndex, setAirlineIndex] = useState();
 
+  // axios api call to get data coordinates
   useEffect(() => {
     axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
-  }, [searchValue]);
+  });
 
+  // handles the state when to show list of airlines and markers when a airline is clicked
   const handleStateClick = airlineName => {
     setActiveState(prevState => ({
       ...Object.fromEntries(
@@ -53,13 +54,14 @@ export default function StateList({ dataList, searchValue, objectState }) {
     setAirlineIndex(getCoordinatesAndTitleToAddToMap(airlineName));
   };
 
-  // gets the index of the airline name that was clicked
+  // gets the index of the airline name that is clicked
   const getCoordinatesAndTitleToAddToMap = airlineName =>
     airlineNameList.findIndex(name => name === airlineName);
 
   useEffect(() => {
     const getCoordinates = async () => {
       try {
+        // gets the unique airline codes for each airline search
         const dataResultsObjectWithNameAndCoordinates = await Promise.all(
           getUniqueListOfAirportCodes(airlineObjectData).map(
             async locationNameAndCoordinates => {
@@ -69,6 +71,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
                 );
 
               return {
+                // gets airport code and coordinates with a latitude and longitude property
                 name: locationNameAndCoordinates,
                 coordinates: getLatitudeLongitudeCoordinatesFromAPI,
               };
@@ -86,14 +89,13 @@ export default function StateList({ dataList, searchValue, objectState }) {
             return findMatchingName
               ? {
                   location: {
-                    ...findMatchingName.coordinates,
-                    title: matchingName.airport,
+                    ...findMatchingName?.coordinates,
+                    title: matchingName?.airport,
                   },
                 }
               : matchingName;
           }),
         );
-        console.log(compareListToFindMatchingCodes);
 
         const getArrayListOfAirlineNames = airlineObjectData.map(a => a.name);
         setAirlineNameList(getArrayListOfAirlineNames);
@@ -105,7 +107,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
     getCoordinates();
   }, [dataList, searchValue, airlineObjectData]);
 
-  const getMarkers =
+  const displayMarkersOnMap =
     coords &&
     coords[airlineIndex] &&
     coords[airlineIndex].map((coordinates, index) => {
@@ -115,7 +117,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
       return (
         <>
           <Marker
-            key={`${index}`}
+            key={`${title}-${index}`}
             position={{ lat: +lat, lng: +lng }}
             title={title}
           />
@@ -132,6 +134,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
         display: "flex",
       }}
     >
+      {/* displays list of airline names based on search and associated locations for each */}
       <ul style={{ listStyle: "none" }}>
         {airlineObjectData.map((airline, index) => (
           <li
@@ -145,8 +148,10 @@ export default function StateList({ dataList, searchValue, objectState }) {
           </li>
         ))}
       </ul>
+
+      {/* displays google map at initial center and map markers of destinations for airports of a state or country */}
       <StateMap displayMap={dataList} centerPointOfMap={searchValue}>
-        {getMarkers}
+        {displayMarkersOnMap}
       </StateMap>
     </div>
   );
