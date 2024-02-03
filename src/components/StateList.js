@@ -7,7 +7,7 @@ import {
 } from "../Utilities";
 import StateMap from "./StateMap";
 
-export default function StateList({ dataList, searchValue, objectState }) {
+export default function StateList({ dataList, searchValue, objectState, map }) {
   const getListOfAirlinesObject = dataList
     .map(state => ({
       // airline name
@@ -32,16 +32,20 @@ export default function StateList({ dataList, searchValue, objectState }) {
         .map(location => location.airport_code).length,
     }))
     .filter(listItem => listItem.codes.length !== 0);
+
   const [getActiveState, setActiveState] = useState(objectState);
   const [coords, setCoords] = useState();
   const [airlineNameList, setAirlineNameList] = useState();
-  const [airlineObjectData] = useState(getListOfAirlinesObject);
+  const [airlineObjectData, setAirlineObjectData] = useState(
+    getListOfAirlinesObject,
+  );
   const [airlineIndex, setAirlineIndex] = useState();
+  console.log(airlineObjectData, getListOfAirlinesObject);
 
   // axios api call to get data coordinates
   useEffect(() => {
     axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
-  });
+  }, [searchValue]);
 
   // handles the state when to show list of airlines and markers when a airline is clicked
   const handleStateClick = airlineName => {
@@ -53,6 +57,14 @@ export default function StateList({ dataList, searchValue, objectState }) {
     }));
     setAirlineIndex(getCoordinatesAndTitleToAddToMap(airlineName));
   };
+
+  useEffect(() => {
+    // Update airlineObjectData when searchValue changes
+    setAirlineObjectData(getListOfAirlinesObject);
+    setAirlineIndex("");
+    // remove highlighted / active airline in list
+    setActiveState({});
+  }, [searchValue]);
 
   // gets the index of the airline name that is clicked
   const getCoordinatesAndTitleToAddToMap = airlineName =>
@@ -150,6 +162,7 @@ export default function StateList({ dataList, searchValue, objectState }) {
       </ul>
 
       {/* displays google map at initial center and map markers of destinations for airports of a state or country */}
+
       <StateMap displayMap={dataList} centerPointOfMap={searchValue}>
         {displayMarkersOnMap}
       </StateMap>

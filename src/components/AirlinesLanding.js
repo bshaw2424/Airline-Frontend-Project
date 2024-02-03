@@ -27,6 +27,7 @@ export default function AirlineLanding() {
   const [formSearch, setFormSearch] = useState(false);
   const [airlineTitle, setAirlineTitle] = useState();
   const [formCategory, setFormCategory] = useState();
+  const [dataArray, setDataArray] = useState();
 
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
@@ -55,7 +56,7 @@ export default function AirlineLanding() {
     if (selectOption === "state" && stateSearch) {
       return (
         <AirlineStateSearch
-          airlineSearch={getAirlineDataFromLoader}
+          airlineSearch={dataArray}
           airlineName={airlineTitle}
           targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
           isScrolled={isScrolled}
@@ -100,12 +101,6 @@ export default function AirlineLanding() {
       setStateSearch(false);
       setAirportCodeSearch(false);
     }
-    // else {
-    //   setAirportCodeSearch(false);
-    //   setInternationalSearch(false);
-    //   setFormSearch(false);
-    //   setStateSearch(false);
-    // }
   };
 
   const getAirlineStateAndNumberOfDestinations = (
@@ -141,6 +136,8 @@ export default function AirlineLanding() {
     // gets the option value from the select input
     const htmlSelectElementOptionValue = selectOption;
 
+    setDataArray(getAirlineDataFromLoader);
+
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
     setFormCategory(
@@ -148,6 +145,7 @@ export default function AirlineLanding() {
         ? "State"
         : "airport code",
     );
+
     setFormValues("");
 
     const getLengthOfTotalAirlinesFromReturnedSubmit = getNumberLengthOfSearch(
