@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
-import InternationalSearch from "./InternationalSearch";
 import AirlineStateSearch from "./AirlineStateSearch";
 import Airlines from "./Airlines";
 
+// External Javascript functions in utilities file
 import {
   upperCaseFirstLetterOfWord,
   displayMessageIfSearchInputNotFound,
@@ -16,19 +16,20 @@ import Form from "./Form";
 
 import AirlineListDisplay from "./AirlineListDisplay";
 import AirlineDisclaimer from "../component/AirlineDisclaimer";
+import InternationalSearch from "./InternationalSearch";
 
 export default function AirlineLanding() {
   const getAirlineDataFromLoader = useLoaderData();
 
   // state management methods
   const [stateSearch, setStateSearch] = useState(false);
-  const [internationalSearch, setInternationalSearch] = useState(false);
+  const [international, setInternationalSearch] = useState(false);
   const [airportCodeSearch, setAirportCodeSearch] = useState(false);
+
   const [formSearch, setFormSearch] = useState(false);
   const [airlineTitle, setAirlineTitle] = useState();
   const [formCategory, setFormCategory] = useState();
   const [dataArray, setDataArray] = useState();
-
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState();
@@ -42,13 +43,11 @@ export default function AirlineLanding() {
       setAirportCodeSearch("");
       setFilterIcons("");
     }
-    if (e.target.value !== "state") {
-      setStateSearch(false);
-    }
   }
 
   function formChange(e) {
     setFormValues(e.target.value);
+    console.log(e.target.value);
   }
 
   // main components that get rendered
@@ -59,18 +58,18 @@ export default function AirlineLanding() {
           airlineSearch={dataArray}
           airlineName={airlineTitle}
           targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+          internationalSearchValue="false"
           isScrolled={isScrolled}
-          divDisplay={stateSearch === false ? "none" : null}
         />
       );
     }
-
-    if (selectOption === "international" && internationalSearch) {
+    if (selectOption === "international" && international) {
       return (
         <InternationalSearch
-          airlineSearch={getAirlineDataFromLoader}
+          airlineSearch={dataArray}
           airlineName={airlineTitle}
           targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+          internationalSearchValue="true"
           isScrolled={isScrolled}
         />
       );
@@ -82,24 +81,6 @@ export default function AirlineLanding() {
           <AirlineListDisplay displayMessage={airlineTitle} />
         </>
       );
-    }
-  };
-
-  const getMaps = (selectOptionItem, airlineLengthSearch) => {
-    if (selectOptionItem === "airport_code" && airlineLengthSearch !== 0) {
-      setAirportCodeSearch(true);
-      setStateSearch(false);
-      setInternationalSearch(false);
-    }
-    if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
-      setStateSearch(true);
-      setAirportCodeSearch(false);
-      setInternationalSearch(false);
-    }
-    if (selectOptionItem === "international" && airlineLengthSearch !== 0) {
-      setInternationalSearch(true);
-      setStateSearch(false);
-      setAirportCodeSearch(false);
     }
   };
 
@@ -175,6 +156,24 @@ export default function AirlineLanding() {
   };
 
   // end of submit function
+
+  const getMaps = (selectOptionItem, airlineLengthSearch) => {
+    if (selectOptionItem === "international" && airlineLengthSearch !== 0) {
+      setInternationalSearch(true);
+      setStateSearch(false);
+      setAirportCodeSearch(false);
+    }
+    if (selectOptionItem === "airport_code" && airlineLengthSearch !== 0) {
+      setAirportCodeSearch(true);
+      setStateSearch(false);
+      setInternationalSearch(false);
+    }
+    if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
+      setStateSearch(true);
+      setAirportCodeSearch(false);
+      setInternationalSearch(false);
+    }
+  };
 
   // Displays error message if the input is in the wrong category
   useEffect(() => {
