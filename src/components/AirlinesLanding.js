@@ -14,75 +14,41 @@ import {
 import Error from "./Error";
 import Form from "./Form";
 
-import AirlineListDisplay from "./AirlineListDisplay";
 import AirlineDisclaimer from "../component/AirlineDisclaimer";
-import InternationalSearch from "./InternationalSearch";
 
 export default function AirlineLanding() {
   const getAirlineDataFromLoader = useLoaderData();
 
   // state management methods
-  const [stateSearch, setStateSearch] = useState(false);
-  const [international, setInternationalSearch] = useState(false);
-  const [airportCodeSearch, setAirportCodeSearch] = useState(false);
 
   const [formSearch, setFormSearch] = useState(false);
-  const [airlineTitle, setAirlineTitle] = useState();
+  const [airlineTitle, setAirlineTitle] = useState("");
   const [formCategory, setFormCategory] = useState();
-  const [dataArray, setDataArray] = useState();
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState();
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
+  const [stateDataSearch, setStateDataSearch] = useState(false);
+  const [showMessage, setShowMessage] = useState();
+  const [internationalDataSearch, setInternationalDataSearch] = useState(false);
+  const [airportDataSearch, setAirportDataSearch] = useState(false);
 
   // gets the value from the select element
   function handleOptionChange(e) {
     setSelectOption(e.target.value);
     if (e.target.value !== "airport_code") {
-      setAirportCodeSearch("");
       setFilterIcons("");
+      setShowMessage("");
+    }
+    if (e.target.value !== "state") {
+      setStateDataSearch(false);
     }
   }
 
   function formChange(e) {
     setFormValues(e.target.value);
-    console.log(e.target.value);
   }
-
-  // main components that get rendered
-  const renderSearchComponent = () => {
-    if (selectOption === "state" && stateSearch) {
-      return (
-        <AirlineStateSearch
-          airlineSearch={dataArray}
-          airlineName={airlineTitle}
-          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-          internationalSearchValue="false"
-          isScrolled={isScrolled}
-        />
-      );
-    }
-    if (selectOption === "international" && international) {
-      return (
-        <InternationalSearch
-          airlineSearch={dataArray}
-          airlineName={airlineTitle}
-          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-          internationalSearchValue="true"
-          isScrolled={isScrolled}
-        />
-      );
-    }
-
-    if (selectOption === "airport_code" && airportCodeSearch) {
-      return (
-        <>
-          <AirlineListDisplay displayMessage={airlineTitle} />
-        </>
-      );
-    }
-  };
 
   const getAirlineStateAndNumberOfDestinations = (
     airlineLength,
@@ -117,8 +83,6 @@ export default function AirlineLanding() {
     // gets the option value from the select input
     const htmlSelectElementOptionValue = selectOption;
 
-    setDataArray(getAirlineDataFromLoader);
-
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
     setFormCategory(
@@ -126,6 +90,28 @@ export default function AirlineLanding() {
         ? "State"
         : "airport code",
     );
+
+    if (selectOption === "state") {
+      setStateDataSearch(true);
+      setInternationalDataSearch(false);
+      setAirportDataSearch(false);
+      setAirlineTitle("");
+    }
+
+    if (selectOption === "international") {
+      setStateDataSearch(false);
+      setInternationalDataSearch(true);
+      setAirportDataSearch(false);
+    }
+
+    if (selectOption === "airport_code") {
+      setStateDataSearch(false);
+      setInternationalDataSearch(false);
+      setAirportDataSearch(true);
+    }
+    selectOption === "airport_code"
+      ? setShowMessage(true)
+      : setShowMessage(false);
 
     setFormValues("");
 
@@ -135,10 +121,7 @@ export default function AirlineLanding() {
       inputValueSubmittedFromForm,
     );
 
-    getMaps(
-      htmlSelectElementOptionValue,
-      getLengthOfTotalAirlinesFromReturnedSubmit,
-    );
+    setSelectOption(htmlSelectElementOptionValue);
 
     getAirlineStateAndNumberOfDestinations(
       getLengthOfTotalAirlinesFromReturnedSubmit,
@@ -153,26 +136,6 @@ export default function AirlineLanding() {
     ).includes(true)
       ? setFormSearch(true)
       : setFormSearch(false);
-  };
-
-  // end of submit function
-
-  const getMaps = (selectOptionItem, airlineLengthSearch) => {
-    if (selectOptionItem === "international" && airlineLengthSearch !== 0) {
-      setInternationalSearch(true);
-      setStateSearch(false);
-      setAirportCodeSearch(false);
-    }
-    if (selectOptionItem === "airport_code" && airlineLengthSearch !== 0) {
-      setAirportCodeSearch(true);
-      setStateSearch(false);
-      setInternationalSearch(false);
-    }
-    if (selectOptionItem === "state" && airlineLengthSearch !== 0) {
-      setStateSearch(true);
-      setAirportCodeSearch(false);
-      setInternationalSearch(false);
-    }
   };
 
   // Displays error message if the input is in the wrong category
@@ -193,6 +156,8 @@ export default function AirlineLanding() {
           <Airlines
             targetInput={previousFormValue.toUpperCase()}
             showIconForAirportCode={filterIcons}
+            message={airlineTitle}
+            show={showMessage}
           />
         }
         handleOptionChange={e => handleOptionChange(e)}
@@ -207,7 +172,16 @@ export default function AirlineLanding() {
             messageDiv={formSearch === false ? "none" : null}
           />
         )}
-        {renderSearchComponent()}
+        {stateDataSearch && (
+          <AirlineStateSearch
+            airlineSearch={getAirlineDataFromLoader}
+            airlineName={airlineTitle}
+            targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+            internationalSearchValue="false"
+            selectOptionValue={selectOption}
+            isScrolled={isScrolled}
+          />
+        )}
         <AirlineDisclaimer />
       </section>
     </main>
