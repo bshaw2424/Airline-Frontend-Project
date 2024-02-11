@@ -33,6 +33,7 @@ export default function AirlineLanding() {
   const [showMessage, setShowMessage] = useState();
   const [internationalDataSearch, setInternationalDataSearch] = useState(false);
   const [airportDataSearch, setAirportDataSearch] = useState(false);
+  const [icaoOrIataSearch, setIcaoOrIataSearch] = useState("");
 
   // gets the value from the select element
   function handleOptionChange(e) {
@@ -40,9 +41,6 @@ export default function AirlineLanding() {
     if (e.target.value !== "airport_code") {
       setFilterIcons("");
       setShowMessage("");
-    }
-    if (e.target.value !== "state") {
-      setStateDataSearch(false);
     }
   }
 
@@ -93,14 +91,16 @@ export default function AirlineLanding() {
 
     if (selectOption === "state") {
       setStateDataSearch(true);
+      setIcaoOrIataSearch("false");
       setInternationalDataSearch(false);
       setAirportDataSearch(false);
       setAirlineTitle("");
     }
 
     if (selectOption === "international") {
-      setStateDataSearch(false);
-      setInternationalDataSearch(true);
+      setStateDataSearch(true);
+      setIcaoOrIataSearch("true");
+      setInternationalDataSearch(false);
       setAirportDataSearch(false);
     }
 
@@ -177,7 +177,7 @@ export default function AirlineLanding() {
             airlineSearch={getAirlineDataFromLoader}
             airlineName={airlineTitle}
             targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-            internationalSearchValue="false"
+            internationalSearchValue={icaoOrIataSearch}
             selectOptionValue={selectOption}
             isScrolled={isScrolled}
           />
