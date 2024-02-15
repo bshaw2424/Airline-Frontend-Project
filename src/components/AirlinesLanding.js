@@ -72,6 +72,20 @@ export default function AirlineLanding() {
   }
   console.log(grace());
 
+  const getACodes = getAirlineDataFromLoader
+    .map(items =>
+      items.destinations.filter(
+        item =>
+          item.state === previousFormValue.toUpperCase() &&
+          item.international === "false",
+      ),
+    )
+    .every(a => a.length === 0);
+
+  const vee = getACodes ? previousFormValue + " is not a " + formCategory : "";
+
+  console.log(vee);
+
   const airlineSearch = e => {
     e.preventDefault();
 
@@ -179,12 +193,12 @@ export default function AirlineLanding() {
       />
 
       <section className="container">
-        {formSearch && (
+        {/* {formSearch && (
           <Error
             message={`${previousFormValue.toUpperCase()} is not a valid ${formCategory}`}
             messageDiv={formSearch === false ? "none" : null}
           />
-        )}
+        )} */}
         {stateDataSearch && (
           <AirlineStateSearch
             airlineSearch={getAirlineDataFromLoader}
