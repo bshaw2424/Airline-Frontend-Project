@@ -8,27 +8,28 @@ import Airlines from "./Airlines";
 import {
   upperCaseFirstLetterOfWord,
   displayMessageIfSearchInputNotFound,
-  getNumberLengthOfSearch,
-  getNameOfAirportFromAirportCodeInput,
+  // getNumberLengthOfSearch,
+  // getNameOfAirportFromAirportCodeInput,
 } from "../Utilities";
 import Error from "./Error";
 import Form from "./Form";
 
 import AirlineDisclaimer from "../components/AirlineDisclaimer";
+// import ValidDestinationSearch from "./ValidDestinationSearch";
 
 export default function AirlineLanding() {
   const getAirlineDataFromLoader = useLoaderData();
 
   // state management methods
 
-  const [formSearch, setFormSearch] = useState(false);
+  const [formSearch, setFormSearch] = useState();
   const [formCategory, setFormCategory] = useState();
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState();
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
-  const [stateDataSearch, setStateDataSearch] = useState(false);
+  const [stateDataSearch, setStateDataSearch] = useState();
   const [internationalDataSearch, setInternationalDataSearch] = useState(false);
   const [airportDataSearch, setAirportDataSearch] = useState(false);
   const [icaoOrIataSearch, setIcaoOrIataSearch] = useState("");
@@ -44,6 +45,7 @@ export default function AirlineLanding() {
     if (e.target.value !== "airport_code") {
       setFilterIcons("");
       setAirportDataSearch(false);
+      setAirportSearchMessage("");
     }
   }
 
@@ -70,21 +72,6 @@ export default function AirlineLanding() {
         .map(airline => airline.map(a => a.airport_name))[0],
     };
   }
-  console.log(grace());
-
-  const getACodes = getAirlineDataFromLoader
-    .map(items =>
-      items.destinations.filter(
-        item =>
-          item.state === previousFormValue.toUpperCase() &&
-          item.international === "false",
-      ),
-    )
-    .every(a => a.length === 0);
-
-  const vee = getACodes ? previousFormValue + " is not a " + formCategory : "";
-
-  console.log(vee);
 
   const airlineSearch = e => {
     e.preventDefault();
@@ -104,16 +91,6 @@ export default function AirlineLanding() {
       setSearchMessage(true);
     }
 
-    htmlSelectElementOptionValue === "airport_code"
-      ? setAirportSearchMessage(
-          `${
-            grace().airportCode
-          } out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
-            grace().airportName
-          } )`,
-        )
-      : setAirportSearchMessage("");
-
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
     setFormCategory(() => {
@@ -125,6 +102,21 @@ export default function AirlineLanding() {
         return "International";
       }
     });
+
+    const airportCode = grace().airportCode; // Store airport code in a variable
+
+    htmlSelectElementOptionValue === "airport_code" && airportCode !== 0
+      ? setAirportSearchMessage(
+          `${airportCode} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
+            grace().airportName
+          } )`,
+        )
+      : setAirportSearchMessage(
+          <Error
+            message={`${formValues.toUpperCase()} is not a valid ${formCategory}`}
+            messageDiv={airportCode === 0} // Always show the error message
+          />,
+        );
 
     if (selectOption === "state") {
       setStateDataSearch(true);
@@ -183,7 +175,7 @@ export default function AirlineLanding() {
           <Airlines
             targetInput={previousFormValue.toUpperCase()}
             showIconForAirportCode={filterIcons}
-            message={airportSearchMessage}
+            // message={airportSearchMessage}
             show={airportDataSearch}
           />
         }
@@ -193,12 +185,7 @@ export default function AirlineLanding() {
       />
 
       <section className="container">
-        {/* {formSearch && (
-          <Error
-            message={`${previousFormValue.toUpperCase()} is not a valid ${formCategory}`}
-            messageDiv={formSearch === false ? "none" : null}
-          />
-        )} */}
+        <h2 className="text-center">{airportSearchMessage}</h2>
         {stateDataSearch && (
           <AirlineStateSearch
             airlineSearch={getAirlineDataFromLoader}
