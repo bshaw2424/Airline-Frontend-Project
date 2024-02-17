@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import DisclaimerMessage from "./DisclaimerMessage";
-import StateMap from "./StateMap";
 import StateList from "./StateList";
+import AirlineSearchResultsDisplay from "./AirlineSearchResultsDisplay";
 
 export default function AirlineStateSearch({
   airlineSearch,
   targetCategoryValue,
-  airlineName,
+  internationalSearchValue,
+  selectOptionValue,
   isScrolled,
 }) {
   useEffect(() => {
@@ -20,43 +20,57 @@ export default function AirlineStateSearch({
         });
       }
     }
-  }, [isScrolled]);
+  }, [isScrolled, targetCategoryValue]);
 
-  const getListOfDestinations = airlineSearch
-    .map(getDestination => ({
+  const getListOfDestinations = () => {
+    const getList = airlineSearch.map(getDestination => ({
       name: getDestination.name,
       codes: getDestination.destinations
         .filter(location => location.state === targetCategoryValue)
         .map(location => location.airport_code),
-    }))
-    .filter(listItem => listItem.codes.length !== 0)
-    .reduce((acc, a) => {
-      acc[a.name] = false;
-      return acc;
-    }, {});
+    }));
+
+    return getList.filter(arrayList => arrayList.codes.length !== 0).length;
+  };
+
+  const lengthOfDestinations = getListOfDestinations();
 
   return (
     <article className="mt-5">
       <div id="stateDestinationMap">
-        <div className="d-flex justify-content-evenly">
-          <StateList
-            dataList={airlineSearch}
-            searchValue={targetCategoryValue}
-            objectState={getListOfDestinations}
-          />
-
-          {/*  SHOWS CENTER POINT OF STATE USED INPUT */}
-          <StateMap
-            displayMap={airlineSearch}
-            centerPointOfMap={targetCategoryValue}
-          />
+        <div className="d-flex justify-content-evenly flex-column">
+          {selectOptionValue === "state" && lengthOfDestinations !== 0 && (
+            <>
+              <StateList
+                dataList={airlineSearch}
+                searchValue={targetCategoryValue}
+                objectState={getListOfDestinations()}
+                internationalSearchValue={internationalSearchValue}
+              />
+              <AirlineSearchResultsDisplay
+                selectOptionValue={selectOptionValue}
+                airlineNumber={getListOfDestinations()}
+                targetValue={targetCategoryValue}
+              />
+            </>
+          )}
+          {selectOptionValue === "international" &&
+            lengthOfDestinations !== 0 && (
+              <>
+                <StateList
+                  dataList={airlineSearch}
+                  searchValue={targetCategoryValue}
+                  objectState={getListOfDestinations()}
+                  internationalSearchValue={internationalSearchValue}
+                />
+                <AirlineSearchResultsDisplay
+                  selectOptionValue={selectOptionValue}
+                  airlineNumber={getListOfDestinations()}
+                  targetValue={targetCategoryValue}
+                />
+              </>
+            )}
         </div>
-      </div>
-      <div className="text-center pt-4">
-        <h2 style={{ fontSize: "2.4rem" }}>
-          {airlineName}
-          <DisclaimerMessage />
-        </h2>
       </div>
     </article>
   );
