@@ -11,7 +11,6 @@ import {
   // getNumberLengthOfSearch,
   // getNameOfAirportFromAirportCodeInput,
 } from "../Utilities";
-import Error from "./Error";
 import Form from "./Form";
 
 import AirlineDisclaimer from "../components/AirlineDisclaimer";
@@ -23,19 +22,21 @@ export default function AirlineLanding() {
   // state management methods
 
   const [formSearch, setFormSearch] = useState();
-  const [formCategory, setFormCategory] = useState();
+
   const [isScrolled, setIsStrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState();
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
-  const [stateDataSearch, setStateDataSearch] = useState();
+  const [stateDataSearch, setStateDataSearch] = useState(true);
   const [internationalDataSearch, setInternationalDataSearch] = useState(false);
   const [airportDataSearch, setAirportDataSearch] = useState(false);
   const [icaoOrIataSearch, setIcaoOrIataSearch] = useState("");
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
-  const [domesticSearch, setDomesticSearch] = useState();
-  const [internationalSearch, setInternationalSearch] = useState();
+  const [domesticSearch, setDomesticSearch] = useState(false);
+  const [internationalSearch, setInternationalSearch] = useState(false);
+  const [airportSearch, setAirportSearch] = useState(false);
+  const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [searchMessage, setSearchMessage] = useState();
 
   // gets the value from the select element
@@ -70,16 +71,35 @@ export default function AirlineLanding() {
         )
         .filter(a => a.length !== 0)
         .map(airline => airline.map(a => a.airport_name))[0],
+      destinationLength: [
+        ...getAirlineDataFromLoader
+          .map(a =>
+            a.destinations.filter(
+              a => a.airport_code === formValues.toUpperCase(),
+            ),
+          )
+          .filter(a => a.length !== 0),
+      ].length,
     };
+  }
+
+  const airportCode = grace().airportCode; // Store airport code in a variable
+
+  let errorMessage;
+  if (selectOption === "airport_code") {
+    errorMessage = "Airport Code";
+  } else if (selectOption === "state") {
+    errorMessage = "State Destination";
+  } else if (selectOption === "international") {
+    errorMessage = "International Destination";
   }
 
   const airlineSearch = e => {
     e.preventDefault();
 
     setIsStrolled(true);
-
     // Gets the value submitted from the input form
-    let inputValueSubmittedFromForm = formValues;
+    const inputValueSubmittedFromForm = formValues;
 
     // gets the option value from the select input
     const htmlSelectElementOptionValue = selectOption;
@@ -93,30 +113,16 @@ export default function AirlineLanding() {
 
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
-    setFormCategory(() => {
-      if (htmlSelectElementOptionValue === "airport_code") {
-        return "Airport Code";
-      } else if (htmlSelectElementOptionValue === "state") {
-        return "State";
-      } else {
-        return "International";
-      }
-    });
 
-    const airportCode = grace().airportCode; // Store airport code in a variable
+    setAirportSearchMessage(
+      `${airportCode} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
+        grace().airportName
+      } )`,
+    );
 
-    htmlSelectElementOptionValue === "airport_code" && airportCode !== 0
-      ? setAirportSearchMessage(
-          `${airportCode} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
-            grace().airportName
-          } )`,
-        )
-      : setAirportSearchMessage(
-          <Error
-            message={`${formValues.toUpperCase()} is not a valid ${formCategory}`}
-            messageDiv={airportCode === 0} // Always show the error message
-          />,
-        );
+    setAirportCodeErrorMessage(
+      `${formValues.toUpperCase()} is not a valid ${errorMessage}`,
+    );
 
     if (selectOption === "state") {
       setStateDataSearch(true);
@@ -125,6 +131,7 @@ export default function AirlineLanding() {
       setInternationalSearch(false);
       setAirportDataSearch(false);
       setDomesticSearch(true);
+      setAirportSearch(false);
     }
 
     if (selectOption === "international") {
@@ -134,6 +141,7 @@ export default function AirlineLanding() {
       setAirportDataSearch(false);
       setDomesticSearch(false);
       setInternationalSearch(true);
+      setAirportSearch(false);
     }
 
     if (selectOption === "airport_code") {
@@ -142,6 +150,7 @@ export default function AirlineLanding() {
       setAirportDataSearch(true);
       setInternationalSearch(false);
       setDomesticSearch(false);
+      setAirportSearch(true);
     }
 
     setFormValues("");
@@ -175,7 +184,7 @@ export default function AirlineLanding() {
           <Airlines
             targetInput={previousFormValue.toUpperCase()}
             showIconForAirportCode={filterIcons}
-            // message={airportSearchMessage}
+            message={airportSearchMessage}
             show={airportDataSearch}
           />
         }
@@ -185,18 +194,29 @@ export default function AirlineLanding() {
       />
 
       <section className="container">
-        <h2 className="text-center">{airportSearchMessage}</h2>
-        {stateDataSearch && (
+        {domesticSearch && (
           <AirlineStateSearch
             airlineSearch={getAirlineDataFromLoader}
             targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
             internationalSearchValue={icaoOrIataSearch}
             selectOptionValue={selectOption}
-            domesticSearch={domesticSearch}
-            internationalSearch={internationalSearch}
+            message={airportCodeErrorMessage}
+            messageDiv={airportCodeErrorMessage}
             isScrolled={isScrolled}
           />
         )}
+        {internationalSearch && (
+          <AirlineStateSearch
+            airlineSearch={getAirlineDataFromLoader}
+            targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+            internationalSearchValue={icaoOrIataSearch}
+            selectOptionValue={selectOption}
+            message={airportCodeErrorMessage}
+            messageDiv={airportCodeErrorMessage}
+            isScrolled={isScrolled}
+          />
+        )}
+
         <AirlineDisclaimer />
       </section>
     </main>
