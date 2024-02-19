@@ -14,6 +14,8 @@ import {
 import Form from "./Form";
 
 import AirlineDisclaimer from "../components/AirlineDisclaimer";
+import Error from "./Error";
+import ValidDestinationSearch from "./ValidDestinationSearch";
 // import ValidDestinationSearch from "./ValidDestinationSearch";
 
 export default function AirlineLanding() {
@@ -35,9 +37,9 @@ export default function AirlineLanding() {
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [domesticSearch, setDomesticSearch] = useState(false);
   const [internationalSearch, setInternationalSearch] = useState(false);
-  const [airportSearch, setAirportSearch] = useState(false);
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [searchMessage, setSearchMessage] = useState();
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
 
   // gets the value from the select element
   function handleOptionChange(e) {
@@ -111,14 +113,27 @@ export default function AirlineLanding() {
       setSearchMessage(true);
     }
 
+    airportCode === 0 && selectOption === "airport_code"
+      ? setShowErrorMessage(true)
+      : setShowErrorMessage(false);
+
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
 
-    setAirportSearchMessage(
-      `${airportCode} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
-        grace().airportName
-      } )`,
-    );
+    if (airportCode !== 0 && selectOption === "airport_code") {
+      setAirportSearchMessage(
+        `${airportCode} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${
+          grace().airportName
+        }`,
+      );
+    } else {
+      setAirportSearchMessage(
+        <ValidDestinationSearch
+          searchValue={inputValueSubmittedFromForm.toUpperCase()}
+          selectMenuValue={errorMessage}
+        />,
+      );
+    }
 
     setAirportCodeErrorMessage(
       `${formValues.toUpperCase()} is not a valid ${errorMessage}`,
@@ -131,7 +146,7 @@ export default function AirlineLanding() {
       setInternationalSearch(false);
       setAirportDataSearch(false);
       setDomesticSearch(true);
-      setAirportSearch(false);
+      setAirportDataSearch(false);
     }
 
     if (selectOption === "international") {
@@ -141,7 +156,7 @@ export default function AirlineLanding() {
       setAirportDataSearch(false);
       setDomesticSearch(false);
       setInternationalSearch(true);
-      setAirportSearch(false);
+      setAirportDataSearch(false);
     }
 
     if (selectOption === "airport_code") {
@@ -150,7 +165,7 @@ export default function AirlineLanding() {
       setAirportDataSearch(true);
       setInternationalSearch(false);
       setDomesticSearch(false);
-      setAirportSearch(true);
+      setAirportDataSearch(true);
     }
 
     setFormValues("");
@@ -185,7 +200,8 @@ export default function AirlineLanding() {
             targetInput={previousFormValue.toUpperCase()}
             showIconForAirportCode={filterIcons}
             message={airportSearchMessage}
-            show={airportDataSearch}
+            errorMessage={airportCodeErrorMessage}
+            error={showErrorMessage}
           />
         }
         handleOptionChange={e => handleOptionChange(e)}
