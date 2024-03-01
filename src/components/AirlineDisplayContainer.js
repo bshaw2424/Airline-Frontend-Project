@@ -1,15 +1,16 @@
 // import statements
 import { useState } from "react";
 import AirlineDropdownList from "./AirlineDropdownList";
-import FilterListButtons from "./FilterListButtons";
+// import FilterListButtons from "./FilterListButtons";
 import DisplayFilterList from "./DisplayFilterList";
-import { getStates } from "../Utilities";
+import { getStates, upperCaseFirstLetterOfWord } from "../Utilities";
 import ShowDataList from "./ShowDataList";
 import StateFilter from "./StateFilter";
 import MainDestinationList from "./MainDestinationList";
 import TotalDestinationNumber from "./TotalDestinationNumber";
 import AirlineInformationDisplay from "./AirlineInformationDisplay";
 import NotificationPage from "./NotificationPage";
+import e from "cors";
 
 export default function AirlineDisplayContainer({ destinations }) {
   // state management
@@ -24,6 +25,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [locationState, setLocationState] = useState(0);
   const [locationShow, setLocationShow] = useState(true);
   const [ace, setAce] = useState("");
+  const [listType, setListType] = useState();
 
   // Methods
   function filteredLists(category, stringBoolean) {
@@ -33,39 +35,39 @@ export default function AirlineDisplayContainer({ destinations }) {
     return dataList.length;
   }
 
-  function getTotalDestinationNumber(target) {
-    if (target.currentTarget.innerText) {
-      setDestinatonNumber(destinations.destinations.map(a => a.name).length);
-    }
-  }
+  // function getTotalDestinationNumber(target) {
+  //   if (target.currentTarget.innerText) {
+  //     setDestinatonNumber(destinations.destinations.map(a => a.name).length);
+  //   }
+  // }
 
-  function getTotalMainFilteredDestinationNumber(target) {
+  function getTotalMainFilteredDestinationNumber(e) {
     const number = destinations.destinations.map(a => a.name).length;
 
-    if (target.currentTarget.innerText) {
+    if (e.target.value) {
       setDestinatonNumber(`${number}`);
       setButtonInnertext(number);
-      setAce(`no target.currentTarget.innerText Destinations.`);
+      setAce(`no ${e.target.value.toUpperCase()} Destinations.`);
     }
   }
 
-  function getTotalFilteredDestinationNumber(target, category, value) {
+  function getTotalFilteredDestinationNumber(e, category, value) {
     const number = destinations.destinations
       .filter(destination => destination[category] === value)
       .map(a => a.name).length;
 
-    if (target.currentTarget.innerText) {
-      setDestinatonNumber(`${target.currentTarget.innerText} - ${number}`);
+    if (e.target.value) {
+      setDestinatonNumber(`${number}`);
       setButtonInnertext(number);
-      setAce(`No ${target.currentTarget.innerText} Destinations`);
+      setAce(`No ${upperCaseFirstLetterOfWord(e.target.value)} Destinations`);
     }
   }
 
-  function getTotalAirlineDestinatonsNumber() {
-    setDestinatonNumber(
-      destinations.destinations.map(airline => airline).length,
-    );
-  }
+  // function getTotalAirlineDestinatonsNumber() {
+  //   setDestinatonNumber(
+  //     destinations.destinations.map(airline => airline).length,
+  //   );
+  // }
 
   function getFilteredStatesDestinationNumber(targetElement) {
     const getDestinationStateDropdownTotal = destinations.destinations.filter(
@@ -82,7 +84,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setDestinatonNumber(() =>
       destinations.destinations.map(mainList => mainList.length),
     );
-    getTotalDestinationNumber(e);
+    // getTotalDestinationNumber(e);
     getTotalMainFilteredDestinationNumber(e);
     setLocationState("");
     setMainData(true);
@@ -128,6 +130,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(false);
     setDomesticData(false);
     setSeasonalData(false);
+    setListType("");
     setAce("");
   }
   function resetDestination(e) {
@@ -136,13 +139,29 @@ export default function AirlineDisplayContainer({ destinations }) {
       setDestinatonNumber(airline.destinations.length),
     );
   }
+  const changeValue = e => {
+    setAce(e.target.value);
+    setListType(e.target.value);
+    if (e.target.value === "all") {
+      MainData(e);
+    }
+    if (e.target.value === "international") {
+      InternationalData(e);
+    }
+    if (e.target.value === "domestic") {
+      Domestic(e);
+    }
+    if (e.target.value === "seasonal") {
+      SeasonalData(e);
+    }
+  };
 
   return (
     <section className="container">
       <div className="d-flex align-items-center justify-content-between">
         <AirlineInformationDisplay
           airline={destinations}
-          onClick={() => getTotalAirlineDestinatonsNumber()}
+          // onClick={() => getTotalAirlineDestinatonsNumber()}
         />
         {/* destination counter */}
         <TotalDestinationNumber
@@ -156,38 +175,21 @@ export default function AirlineDisplayContainer({ destinations }) {
       {/* filter through airline data buttons */}
       <section className="d-flex justify-content-between p-4 align-items-center mt-3 button-contain rounded">
         <div>
-          <FilterListButtons
-            btnName={"All"}
-            className={"primary"}
-            destinations={destinations}
-            listData={e => {
-              MainData(e);
-            }}
-          />
-          <FilterListButtons
-            btnName={"Domestic"}
-            className={"primary"}
-            destinations={destinations}
-            listData={e => {
-              Domestic(e);
-            }}
-          />
-          <FilterListButtons
-            btnName={"International"}
-            className={"primary"}
-            listData={e => {
-              InternationalData(e);
-            }}
-          />
-
-          <FilterListButtons
-            btnName={"Seasonal"}
-            className={"primary"}
-            destinations={destinations}
-            listData={e => {
-              SeasonalData(e);
-            }}
-          />
+          <select
+            className="form-select"
+            onChange={e => changeValue(e)}
+            value={listType}
+            name=""
+            id=""
+          >
+            <option value="disabled" className="disabled" selected>
+              Filter By
+            </option>
+            <option value="all">All</option>
+            <option value="domestic">Domestic</option>
+            <option value="international">International</option>
+            <option value="seasonal">Seasonal</option>
+          </select>
         </div>
         <div className="d-flex">
           <AirlineDropdownList
