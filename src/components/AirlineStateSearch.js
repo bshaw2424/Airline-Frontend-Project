@@ -36,20 +36,6 @@ export default function AirlineStateSearch({
     return getList.filter(arrayList => arrayList.codes.length !== 0).length;
   };
 
-  const getSound = () => {
-    const airline = airlineSearch
-      .map(item =>
-        item.destinations
-          .filter(item => item.international === "true")
-          .map(a => a.state.toLowerCase()),
-      )
-      .reduce((a, b) => a.concat(b), []);
-
-    return [...new Set(airline)];
-  };
-
-  const findValue = getSound().includes(targetCategoryValue.toLowerCase());
-
   const lengthOfDestinations = getListOfDestinations();
 
   return (
@@ -60,44 +46,38 @@ export default function AirlineStateSearch({
             <Error message={message} messageDiv={messageDiv} />
           )}
 
-          {!findValue && lengthOfDestinations !== 0 && (
+          {selectOptionValue === "state" && lengthOfDestinations !== 0 && (
             <>
-              {selectOptionValue === "state" && (
-                <>
-                  <StateList
-                    dataList={airlineSearch}
-                    searchValue={targetCategoryValue}
-                    objectState={getListOfDestinations()}
-                    internationalSearchValue={internationalSearchValue}
-                  />
-                  <AirlineSearchResultsDisplay
-                    selectOptionValue={selectOptionValue}
-                    airlineNumber={getListOfDestinations()}
-                    targetValue={targetCategoryValue}
-                  />
-                </>
-              )}
+              <StateList
+                dataList={airlineSearch}
+                searchValue={targetCategoryValue}
+                objectState={getListOfDestinations()}
+                internationalSearchValue={internationalSearchValue}
+              />
+              <AirlineSearchResultsDisplay
+                selectOptionValue={selectOptionValue}
+                airlineNumber={getListOfDestinations()}
+                targetValue={targetCategoryValue}
+              />
             </>
           )}
-          {findValue && lengthOfDestinations !== 0 && (
-            <>
-              {selectOptionValue === "international" && (
-                <>
-                  <StateList
-                    dataList={airlineSearch}
-                    searchValue={targetCategoryValue}
-                    objectState={getListOfDestinations()}
-                    internationalSearchValue={internationalSearchValue}
-                  />
-                  <AirlineSearchResultsDisplay
-                    selectOptionValue={selectOptionValue}
-                    airlineNumber={getListOfDestinations()}
-                    targetValue={targetCategoryValue}
-                  />
-                </>
-              )}
-            </>
-          )}
+
+          {selectOptionValue === "international" &&
+            lengthOfDestinations !== 0 && (
+              <>
+                <StateList
+                  dataList={airlineSearch}
+                  searchValue={targetCategoryValue}
+                  objectState={getListOfDestinations()}
+                  internationalSearchValue={internationalSearchValue}
+                />
+                <AirlineSearchResultsDisplay
+                  selectOptionValue={selectOptionValue}
+                  airlineNumber={getListOfDestinations()}
+                  targetValue={targetCategoryValue}
+                />
+              </>
+            )}
         </div>
       </div>
     </article>
