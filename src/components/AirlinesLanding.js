@@ -11,7 +11,6 @@ import {
 } from "../Utilities";
 import Form from "./Form";
 import AirlineDisclaimer from "../components/AirlineDisclaimer";
-import ValidDestinationSearch from "./ValidDestinationSearch";
 
 export default function AirlineLanding() {
   const getAirlineDataFromLoader = useLoaderData();
@@ -25,15 +24,10 @@ export default function AirlineLanding() {
   const [selectOption, setSelectOption] = useState("select_option");
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
-  const [stateDataSearch, setStateDataSearch] = useState(true);
-  const [airportDataSearch, setAirportDataSearch] = useState(false);
-  // const [icaoOrIataSearch, setIcaoOrIataSearch] = useState("");
+  // const [airportDataSearch, setAirportDataSearch] = useState(false);
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
-  const [flightSearchMessage, setFlightSearchMessage] = useState("");
-  const [flightSearch, setFlightSearch] = useState(false);
-  // const [internationalSearch, setInternationalSearch] = useState(false);
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [airportCodeSearch, setAirportCodeSearch] = useState(false);
 
   const getLowerCaseUniqueListOfStateDestination = () => {
     const airline = getAirlineDataFromLoader
@@ -57,25 +51,8 @@ export default function AirlineLanding() {
 
     if (e.target.value !== "airport_code") {
       setFilterIcons("");
-      setAirportDataSearch(false);
-      setShowErrorMessage(true);
-    }
-    if (e.target.value === "state") {
-      setFlightSearch(true);
-      setShowErrorMessage(false);
     }
   }
-
-  useEffect(() => {
-    if (selectOption === "airport_code") {
-      setFlightSearchMessage(false);
-    }
-
-    if (selectOption === "state") {
-      setShowErrorMessage(false);
-      setAirportSearchMessage(false);
-    }
-  }, [selectOption]);
 
   function formChange(e) {
     setFormValues(e.target.value);
@@ -121,54 +98,22 @@ export default function AirlineLanding() {
     // gets the option value from the select input
     const htmlSelectElementOptionValue = selectOption;
 
-    if (airlineAirportLength === 0 && selectOption === "airport_code") {
-      setShowErrorMessage(true);
-    }
-    if (selectOption === "state") {
-      setShowErrorMessage(false);
-    }
-    // ?
-    // : setShowErrorMessage(false);
-
     setPreviousFormValue(inputValueSubmittedFromForm);
     setFilterIcons(htmlSelectElementOptionValue);
 
-    airlineAirportLength !== 0 &&
-      selectOption === "airport_code" &&
+    if (selectOption === "airport_code") {
       setAirportSearchMessage(
         `${airlineAirportLength} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${airportName} )`,
       );
+    }
 
-    airlineAirportLength !== 0 &&
-      selectOption !== "airport_code" &&
-      setFlightSearchMessage(
-        <ValidDestinationSearch
-          searchValue={inputValueSubmittedFromForm.toUpperCase()}
-          selectMenuValue={errorMessage}
-        />,
-      );
+    if (selectOption === "airport_code" && airlineAirportLength === 0) {
+      setAirportSearchMessage(false);
+    }
 
     setAirportCodeErrorMessage(
       `${formValues.toUpperCase()} is not a valid ${errorMessage}`,
     );
-
-    if (selectOption === "state") {
-      setStateDataSearch(true);
-      // setIcaoOrIataSearch("false");
-      // setInternationalDataSearch(false);
-      // setInternationalSearch(false);
-      setAirportDataSearch(false);
-      setFlightSearch(true);
-      setAirportDataSearch(false);
-    }
-
-    if (selectOption === "airport_code") {
-      setStateDataSearch(false);
-      // setInternationalDataSearch(false);
-      setAirportDataSearch(true);
-      setFlightSearch(false);
-      setAirportDataSearch(true);
-    }
 
     setFormValues("");
 
@@ -204,21 +149,17 @@ export default function AirlineLanding() {
         showIconForAirportCode={filterIcons}
         message={airportSearchMessage}
         errorMessage={airportCodeErrorMessage}
-        error={showErrorMessage}
+        error={airportCodeSearch}
       />
 
       <section className="container">
-        {flightSearch && (
-          <AirlineStateSearch
-            airlineSearch={getAirlineDataFromLoader}
-            targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-            internationalSearchValue={String(findValue)}
-            selectOptionValue={selectOption}
-            message={airportCodeErrorMessage}
-            messageDiv={airportCodeErrorMessage}
-            isScrolled={isScrolled}
-          />
-        )}
+        <AirlineStateSearch
+          airlineSearch={getAirlineDataFromLoader}
+          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+          internationalSearchValue={String(findValue)}
+          selectOptionValue={selectOption}
+          isScrolled={isScrolled}
+        />
 
         <AirlineDisclaimer />
       </section>
