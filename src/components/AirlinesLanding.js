@@ -11,6 +11,8 @@ import {
 } from "../Utilities";
 import Form from "./Form";
 import AirlineDisclaimer from "../components/AirlineDisclaimer";
+import DisplayAirportCodeTitle from "./DisplayAirportCodeTitle";
+import Error from "./Error";
 
 export default function AirlineLanding() {
   const getAirlineDataFromLoader = useLoaderData();
@@ -24,10 +26,10 @@ export default function AirlineLanding() {
   const [selectOption, setSelectOption] = useState("select_option");
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
-  // const [airportDataSearch, setAirportDataSearch] = useState(false);
+  const [airportSearch, setAirportSearch] = useState(null);
+  const [mapSearch, setMapSearch] = useState(null);
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
-  const [airportCodeSearch, setAirportCodeSearch] = useState(false);
 
   const getLowerCaseUniqueListOfStateDestination = () => {
     const airline = getAirlineDataFromLoader
@@ -44,19 +46,6 @@ export default function AirlineLanding() {
   const findValue = getLowerCaseUniqueListOfStateDestination().includes(
     previousFormValue.toLowerCase(),
   );
-
-  // gets the value from the select element
-  function handleOptionChange(e) {
-    setSelectOption(e.target.value);
-
-    if (e.target.value !== "airport_code") {
-      setFilterIcons("");
-    }
-  }
-
-  function formChange(e) {
-    setFormValues(e.target.value);
-  }
 
   const objectOfAirlineLengthAndAirportName = () => {
     return {
@@ -81,6 +70,24 @@ export default function AirlineLanding() {
   const { airlineAirportLength, airportName } =
     objectOfAirlineLengthAndAirportName();
 
+  // gets the value from the select element
+  function handleOptionChange(e) {
+    setSelectOption(e.target.value);
+
+    if (e.target.value === "airport_code") {
+      setMapSearch(false);
+    }
+
+    if (e.target.value === "state") {
+      setAirportSearch(false);
+      setFilterIcons("");
+    }
+  }
+
+  function formChange(e) {
+    setFormValues(e.target.value);
+  }
+
   let errorMessage;
   if (selectOption === "airport_code") {
     errorMessage = "Airport Code";
@@ -102,13 +109,15 @@ export default function AirlineLanding() {
     setFilterIcons(htmlSelectElementOptionValue);
 
     if (selectOption === "airport_code") {
+      setAirportSearch(true);
       setAirportSearchMessage(
-        `${airlineAirportLength} out of 10 fly to ${inputValueSubmittedFromForm.toUpperCase()} - ( ${airportName} )`,
+        <DisplayAirportCodeTitle
+          selectOption={selectOption}
+          airlineAirportLength={airlineAirportLength}
+          airportFormValue={inputValueSubmittedFromForm}
+          airportName={airportName}
+        />,
       );
-    }
-
-    if (selectOption === "airport_code" && airlineAirportLength === 0) {
-      setAirportSearchMessage(false);
     }
 
     setAirportCodeErrorMessage(
@@ -116,6 +125,11 @@ export default function AirlineLanding() {
     );
 
     setFormValues("");
+
+    if (selectOption === "state") {
+      setMapSearch(true);
+      setAirportSearchMessage(false);
+    }
 
     !displayMessageIfSearchInputNotFound(
       getAirlineDataFromLoader,
@@ -147,20 +161,21 @@ export default function AirlineLanding() {
       <Airlines
         targetInput={previousFormValue.toUpperCase()}
         showIconForAirportCode={filterIcons}
-        message={airportSearchMessage}
-        errorMessage={airportCodeErrorMessage}
-        error={airportCodeSearch}
       />
 
       <section className="container">
-        <AirlineStateSearch
-          airlineSearch={getAirlineDataFromLoader}
-          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-          internationalSearchValue={String(findValue)}
-          selectOptionValue={selectOption}
-          isScrolled={isScrolled}
-        />
-
+        {mapSearch && (
+          <AirlineStateSearch
+            airlineSearch={getAirlineDataFromLoader}
+            targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+            internationalSearchValue={String(findValue)}
+            selectOptionValue={selectOption}
+            airportName={airportName}
+            isScrolled={isScrolled}
+          />
+        )}
+        {/* <Error message={airportCodeErrorMessage} messageDiv={true} /> */}
+        {airportSearch && airportSearchMessage}
         <AirlineDisclaimer />
       </section>
     </main>
