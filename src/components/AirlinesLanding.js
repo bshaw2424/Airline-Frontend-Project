@@ -30,6 +30,7 @@ export default function AirlineLanding() {
   const [mapSearch, setMapSearch] = useState(null);
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
+  const [error, setError] = useState();
 
   const getLowerCaseUniqueListOfStateDestination = () => {
     const airline = getAirlineDataFromLoader
@@ -70,24 +71,6 @@ export default function AirlineLanding() {
   const { airlineAirportLength, airportName } =
     objectOfAirlineLengthAndAirportName();
 
-  // gets the value from the select element
-  function handleOptionChange(e) {
-    setSelectOption(e.target.value);
-
-    if (e.target.value === "airport_code") {
-      setMapSearch(false);
-    }
-
-    if (e.target.value === "state") {
-      setAirportSearch(false);
-      setFilterIcons("");
-    }
-  }
-
-  function formChange(e) {
-    setFormValues(e.target.value);
-  }
-
   let errorMessage;
   if (selectOption === "airport_code") {
     errorMessage = "Airport Code";
@@ -95,21 +78,41 @@ export default function AirlineLanding() {
     errorMessage = "State or International Destinaiton";
   }
 
+  function formChange(e) {
+    setFormValues(e.target.value);
+  }
+
+  // gets the value from the select element
+  function handleOptionChange(e) {
+    setSelectOption(e.target.value);
+
+    if (e.target.value === "state") {
+      setError(false);
+      setAirportSearch(false);
+      setFilterIcons("");
+    }
+    if (e.target.value === "airport_code") {
+      setError(false);
+      setMapSearch(false);
+    }
+  }
+
   const airlineSearch = e => {
     e.preventDefault();
 
     setIsStrolled(true);
+
     // Gets the value submitted from the input form
     const inputValueSubmittedFromForm = formValues;
 
-    // gets the option value from the select input
-    const htmlSelectElementOptionValue = selectOption;
-
     setPreviousFormValue(inputValueSubmittedFromForm);
-    setFilterIcons(htmlSelectElementOptionValue);
+
+    setFilterIcons(selectOption);
 
     if (selectOption === "airport_code") {
       setAirportSearch(true);
+      setError(false);
+      setMapSearch(false);
       setAirportSearchMessage(
         <DisplayAirportCodeTitle
           selectOption={selectOption}
@@ -120,20 +123,31 @@ export default function AirlineLanding() {
       );
     }
 
+    if (selectOption === "state") {
+      setMapSearch(true);
+      setAirportSearch(false);
+      setError(false);
+    } else {
+      setError(true);
+      setMapSearch(false);
+    }
+
     setAirportCodeErrorMessage(
       `${formValues.toUpperCase()} is not a valid ${errorMessage}`,
     );
 
-    setFormValues("");
-
-    if (selectOption === "state") {
-      setMapSearch(true);
-      setAirportSearchMessage(false);
+    if (airlineAirportLength === 0 && selectOption === "airport_code") {
+      setError(true);
+      setAirportSearch(false);
+    } else {
+      setError(false);
     }
+
+    setFormValues("");
 
     !displayMessageIfSearchInputNotFound(
       getAirlineDataFromLoader,
-      htmlSelectElementOptionValue,
+      selectOption,
       inputValueSubmittedFromForm,
     ).includes(true)
       ? setFormSearch(true)
@@ -161,21 +175,28 @@ export default function AirlineLanding() {
       <Airlines
         targetInput={previousFormValue.toUpperCase()}
         showIconForAirportCode={filterIcons}
+        airportCodeErrorMessage={airportCodeErrorMessage}
       />
 
       <section className="container">
-        {mapSearch && (
-          <AirlineStateSearch
-            airlineSearch={getAirlineDataFromLoader}
-            targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
-            internationalSearchValue={String(findValue)}
-            selectOptionValue={selectOption}
-            airportName={airportName}
-            isScrolled={isScrolled}
-          />
-        )}
-        {/* <Error message={airportCodeErrorMessage} messageDiv={true} /> */}
+        <AirlineStateSearch
+          airlineSearch={getAirlineDataFromLoader}
+          targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
+          internationalSearchValue={String(findValue)}
+          selectOptionValue={selectOption}
+          airportName={airportName}
+          mapSearch={mapSearch}
+          message={airportCodeErrorMessage}
+          messageDiv={mapSearch}
+          isScrolled={isScrolled}
+        />
+
         {airportSearch && airportSearchMessage}
+
+        {error && (
+          <Error message={airportCodeErrorMessage} messageDiv={error} />
+        )}
+
         <AirlineDisclaimer />
       </section>
     </main>
