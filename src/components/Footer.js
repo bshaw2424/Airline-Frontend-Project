@@ -8,7 +8,7 @@ export default function Footer() {
           className="container d-flex justify-content-center align-item-center"
           style={{ color: "#fff" }}
         >
-          &copy; 2023 All Rights Reserved
+          &copy; {new Date().getFullYear()} - All Rights Reserved
         </p>
       </div>
     </footer>
