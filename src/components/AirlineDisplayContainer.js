@@ -1,7 +1,6 @@
 // import statements
 import { useState } from "react";
 import AirlineDropdownList from "./AirlineDropdownList";
-// import FilterListButtons from "./FilterListButtons";
 import DisplayFilterList from "./DisplayFilterList";
 import { getStates, upperCaseFirstLetterOfWord } from "../Utilities";
 import ShowDataList from "./ShowDataList";
@@ -10,14 +9,14 @@ import MainDestinationList from "./MainDestinationList";
 import TotalDestinationNumber from "./TotalDestinationNumber";
 import AirlineInformationDisplay from "./AirlineInformationDisplay";
 import NotificationPage from "./NotificationPage";
-import e from "cors";
+// import e from "cors";
 
 export default function AirlineDisplayContainer({ destinations }) {
   // state management
   const [mainData, setMainData] = useState(true);
   const [domesticData, setDomesticData] = useState(false);
   const [seasonalData, setSeasonalData] = useState();
-  const [getButtonInnertext, setButtonInnertext] = useState(1);
+  const [getButtonInnertext, setButtonInnertext] = useState(false);
   const [internationalData, setInternationalData] = useState();
   const [destinationNumber, setDestinatonNumber] = useState(
     destinations.destinations.length,
@@ -46,38 +45,38 @@ export default function AirlineDisplayContainer({ destinations }) {
 
     if (e.target.value) {
       setDestinatonNumber(`${number}`);
-      setButtonInnertext(number);
+      setButtonInnertext(true);
       setAce(`no ${e.target.value.toUpperCase()} Destinations.`);
     }
   }
 
   function getTotalFilteredDestinationNumber(e, category, value) {
-    const number = destinations.destinations
+    const destinationTotalNumber = destinations.destinations
       .filter(destination => destination[category] === value)
       .map(a => a.name).length;
 
-    if (e.target.value) {
-      setDestinatonNumber(`${number}`);
-      setButtonInnertext(number);
+    if (destinationTotalNumber > 1) {
+      setDestinatonNumber(destinationTotalNumber);
+      setButtonInnertext(false);
+    }
+    if (destinationTotalNumber < 1) {
+      setButtonInnertext(true);
+      setDestinatonNumber(destinationTotalNumber);
       setAce(`No ${upperCaseFirstLetterOfWord(e.target.value)} Destinations`);
     }
   }
-
-  // function getTotalAirlineDestinatonsNumber() {
-  //   setDestinatonNumber(
-  //     destinations.destinations.map(airline => airline).length,
-  //   );
-  // }
 
   function getFilteredStatesDestinationNumber(targetElement) {
     const getDestinationStateDropdownTotal = destinations.destinations.filter(
       a => a.state === targetElement.target.value,
     ).length;
+
     if (targetElement.target.value) {
       setDestinatonNumber(
         `${targetElement.target.value} - ${getDestinationStateDropdownTotal}`,
       );
     }
+    setButtonInnertext(false);
   }
 
   function MainData(e) {
@@ -243,7 +242,7 @@ export default function AirlineDisplayContainer({ destinations }) {
           targetValue={locationState}
         />
       )}
-      {getButtonInnertext === 0 && <NotificationPage destinationType={ace} />}
+      {getButtonInnertext && <NotificationPage destinationType={ace} />}
     </section>
   );
 }
