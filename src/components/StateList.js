@@ -1,51 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { Marker } from "@react-google-maps/api";
+import DisplayMarkers from "./DisplayMarkers";
 import { axiosCallToLatitudeAndLongitudeCoordinates } from "./AirportAxiosQuery";
 import {
   getUniqueListOfAirportCodes,
   changeAirportCodeToIcaoCode,
 } from "../Utilities";
 import StateMap from "./StateMap";
+import AirlineMapList from "./AirlineMapList";
 
-export default function StateList({ dataList, searchValue, objectState, map }) {
-  const getListOfAirlinesObject = dataList
-    .map(state => ({
-      // airline name
-      name: state.name,
-      codes: state.destinations
-        .filter(location => location.state === searchValue)
-        // get object of ICAO airport codes and corresponding airport name
-        .reduce((createObjectOfAirportCodeAndName, items) => {
-          createObjectOfAirportCodeAndName.push({
-            code: changeAirportCodeToIcaoCode(items.airport_code),
-            airport: items.airport_name,
-          });
-          return createObjectOfAirportCodeAndName;
-        }, []),
-      // length of destinations within the targeted state search (ex... Arizona)
-      length: state.destinations
-        .filter(
-          location =>
-            location.state === searchValue &&
-            location.international === "false",
-        )
-        .map(location => location.airport_code).length,
-    }))
-    .filter(listItem => listItem.codes.length !== 0);
+export default function StateList({
+  dataList,
+  searchValue,
+  objectState,
+  internationalSearchValue,
+}) {
+  const getListOfAirlinesObject = () =>
+    dataList
+      .map(state => ({
+        name: state.name,
+        codes: state.destinations
+          .filter(location => location.state === searchValue)
+          // reduce method is changed based on search is international or domestic
+          .reduce((createObjectOfAirportCodeAndName, items) => {
+            createObjectOfAirportCodeAndName.push({
+              code:
+                internationalSearchValue === "false"
+                  ? changeAirportCodeToIcaoCode(items.airport_code)
+                  : items.airport_code,
+              // get name of airport
+              airport: items.airport_name,
+            });
+            return createObjectOfAirportCodeAndName;
+          }, []),
+        length: state.destinations
+          .filter(
+            location =>
+              location.state === searchValue &&
+              location.international === internationalSearchValue,
+          )
+          .map(location => location.airport_code).length,
+      }))
+      .filter(listItem => listItem.codes.length !== 0);
 
   const [getActiveState, setActiveState] = useState(objectState);
   const [coords, setCoords] = useState();
   const [airlineNameList, setAirlineNameList] = useState();
   const [airlineObjectData, setAirlineObjectData] = useState(
-    getListOfAirlinesObject,
+    getListOfAirlinesObject(),
   );
   const [airlineIndex, setAirlineIndex] = useState();
-  console.log(airlineObjectData, getListOfAirlinesObject);
 
   // axios api call to get data coordinates
   useEffect(() => {
-    axiosCallToLatitudeAndLongitudeCoordinates(searchValue);
-  }, [searchValue]);
+    axiosCallToLatitudeAndLongitudeCoordinates(
+      internationalSearchValue === "false" ? "icao" : "iata",
+      searchValue,
+    );
+  }, [searchValue, internationalSearchValue]);
 
   // handles the state when to show list of airlines and markers when a airline is clicked
   const handleStateClick = airlineName => {
@@ -58,17 +69,18 @@ export default function StateList({ dataList, searchValue, objectState, map }) {
     setAirlineIndex(getCoordinatesAndTitleToAddToMap(airlineName));
   };
 
+  const getCoordinatesAndTitleToAddToMap = airlineName =>
+    airlineNameList.findIndex(name => name === airlineName);
+
   useEffect(() => {
     // Update airlineObjectData when searchValue changes
-    setAirlineObjectData(getListOfAirlinesObject);
+    setAirlineObjectData(getListOfAirlinesObject());
     setAirlineIndex("");
-    // remove highlighted / active airline in list
+    // remove highlighted , active airline in list
     setActiveState({});
   }, [searchValue]);
 
   // gets the index of the airline name that is clicked
-  const getCoordinatesAndTitleToAddToMap = airlineName =>
-    airlineNameList.findIndex(name => name === airlineName);
 
   useEffect(() => {
     const getCoordinates = async () => {
@@ -76,15 +88,16 @@ export default function StateList({ dataList, searchValue, objectState, map }) {
         // gets the unique airline codes for each airline search
         const dataResultsObjectWithNameAndCoordinates = await Promise.all(
           getUniqueListOfAirportCodes(airlineObjectData).map(
-            async locationNameAndCoordinates => {
+            async airportCode => {
               const getLatitudeLongitudeCoordinatesFromAPI =
                 await axiosCallToLatitudeAndLongitudeCoordinates(
-                  locationNameAndCoordinates,
+                  internationalSearchValue === "false" ? "icao" : "iata",
+                  airportCode,
                 );
 
               return {
                 // gets airport code and coordinates with a latitude and longitude property
-                name: locationNameAndCoordinates,
+                name: airportCode,
                 coordinates: getLatitudeLongitudeCoordinatesFromAPI,
               };
             },
@@ -116,55 +129,19 @@ export default function StateList({ dataList, searchValue, objectState, map }) {
         console.log("there was a error " + error);
       }
     };
-    getCoordinates();
-  }, [dataList, searchValue, airlineObjectData]);
 
-  const displayMarkersOnMap =
-    coords &&
-    coords[airlineIndex] &&
-    coords[airlineIndex].map((coordinates, index) => {
-      const {
-        location: { lat, lng, title },
-      } = coordinates;
-      return (
-        <>
-          <Marker
-            key={`${title}-${index}`}
-            position={{ lat: +lat, lng: +lng }}
-            title={title}
-          />
-        </>
-      );
-    });
+    getCoordinates();
+  }, [dataList, searchValue, airlineObjectData, internationalSearchValue]);
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        fontSize: "1.2rem",
-        display: "flex",
-      }}
-    >
-      {/* displays list of airline names based on search and associated locations for each */}
-      <ul style={{ listStyle: "none" }}>
-        {airlineObjectData.map((airline, index) => (
-          <li
-            key={`${airline.name}-${index}`}
-            className={`ps-4 py-1 me-5 ${
-              getActiveState[airline.name] ? "active" : ""
-            }`}
-            onClick={() => handleStateClick(airline.name)}
-          >
-            {airline.name} - {airline.length} *
-          </li>
-        ))}
-      </ul>
-
-      {/* displays google map at initial center and map markers of destinations for airports of a state or country */}
-
+    <div className="d-flex flex-column flex-lg-row">
+      <AirlineMapList
+        airlineObjectData={airlineObjectData}
+        activeStateWhenClicked={getActiveState}
+        onClick={handleStateClick}
+      />
       <StateMap displayMap={dataList} centerPointOfMap={searchValue}>
-        {displayMarkersOnMap}
+        <DisplayMarkers coords={coords} airlineIndex={airlineIndex} />
       </StateMap>
     </div>
   );
