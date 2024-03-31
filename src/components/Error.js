@@ -4,7 +4,7 @@ export default function Error({ message, messageDiv }) {
       <div
         className="my-3 container"
         style={{
-          display: !messageDiv ? "none" : "block",
+          display: messageDiv ? "block" : "none",
         }}
       >
         <p

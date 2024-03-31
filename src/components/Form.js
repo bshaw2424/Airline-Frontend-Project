@@ -5,10 +5,10 @@ import SelectMenu from "./SelectMenu";
 
 export default function Form({
   onSubmit,
-  airlineLinks,
   handleOptionChange,
   formValue,
   formChange,
+  show,
 }) {
   return (
     <>
@@ -17,19 +17,19 @@ export default function Form({
         style={{
           position: "sticky",
           top: 0,
-          zIndex: 1,
+          zIndex: 2,
           background: "rgba(255,255,255, 0.6)",
         }}
       >
         <form onSubmit={onSubmit} className="py-2">
           <div className="row d-flex justify-content-center">
-            {/* select dropdown menu to choose between state or airport code */}
+            {/* select dropdown menu to choose between state, international, or airport code */}
             <SelectMenu onChange={handleOptionChange} />
             <AirlineQuickSearch value={formValue} onChange={formChange} />
-            <div className="col-sm-3" style={{ width: "10%" }}>
+            <div className="col-sm-3 w-sm-100 w-xl-10 mt-2 mt-sm-2">
               <Button
                 buttonType="submit"
-                className="btn btn-primary"
+                className="btn btn-primary w-100"
                 href="#stateDestinationMap"
               >
                 Submit
@@ -38,7 +38,6 @@ export default function Form({
           </div>
         </form>
       </div>
-      {airlineLinks}
     </>
   );
 }

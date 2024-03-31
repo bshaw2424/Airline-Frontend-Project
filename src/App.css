@@ -1,0 +1,71 @@
+.airline-divs {
+  margin-left: 0;
+  margin-right: 0;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-items: center;
+  width: 80%;
+  margin: auto;
+}
+
+li {
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+li.active {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+
+.gm-ui-hover-effect {
+  display: none;
+}
+
+@media screen and (max-width: 576px) {
+  .airline-divs {
+    grid-template-columns: repeat(1, auto);
+    width: 95%;
+  }
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Alegreya", serif;
+  color: "#333";
+}
+
+body,
+p,
+button a {
+  font-family: "Lato", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+.width {
+  width: 100%;
+}
+
+.airline-link:hover {
+  background: hsl(176, 100%, 92%);
+  border: none;
+}
+
+.list-flex:nth-child(even) {
+  background-color: hsl(216, 98%, 94%);
+  border: none;
+}
+
+.button-contain {
+  outline: 1px solid #333;
+}
+
+.Links {
+  background: "green";
+}/*# sourceMappingURL=App.css.map */

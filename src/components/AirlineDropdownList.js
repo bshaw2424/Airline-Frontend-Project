@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+//import { getLengthOfAirlineDestinations } from "../Utilities";
 
 export default function AirlineDropdownList({
   dropDownName,
   stateLocation,
   mainPage,
+  airline,
+  resetDestinationTotal,
 }) {
   const [airlines, setAirlines] = useState([]);
 
@@ -18,27 +21,14 @@ export default function AirlineDropdownList({
       .catch(e => console.log(e.message));
   }, []);
 
-  function value(e) {
-    const getAirlineDestinationsLengths = airlines
-      .filter(
-        names =>
-          names.slug === e.target.innerText.replace(/ /g, "-").toLowerCase(),
-      )
-      .map(
-        airlineDestinationsLength =>
-          airlineDestinationsLength.destinations.length,
-      );
-    mainPage(true);
-    stateLocation(getAirlineDestinationsLengths);
-  }
-
   return (
     <div className="dropdown">
       <button
-        className="btn  dropdown-toggle"
+        className="btn dropdown-toggle width my-sm-2"
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
+        style={{ outline: "1px solid blue" }}
       >
         {dropDownName}
       </button>
@@ -47,8 +37,8 @@ export default function AirlineDropdownList({
         {airlines.map(airlineNames => (
           <li key={airlineNames._id}>
             <Link
-              onClick={e => value(e)}
-              to={`/airlines/${airlineNames.slug}`}
+              onClick={resetDestinationTotal}
+              to={`/airlines/${airlineNames.slug}/destinations`}
               className="dropdown-item"
               value={airlineNames.name}
             >

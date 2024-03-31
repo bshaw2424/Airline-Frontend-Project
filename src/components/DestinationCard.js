@@ -15,7 +15,7 @@ const DestinationCard = ({
         {name} - ( {airport_code} )
       </h4>
     </div>
-    <div className="width ps-5 col">
+    <div className="width ps-lg-5">
       <p>
         <b>Airport:</b> {airport_name}
       </p>

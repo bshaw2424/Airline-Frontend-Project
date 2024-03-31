@@ -13,7 +13,7 @@ import NotificationPage from "./NotificationPage";
 
 export default function AirlineDisplayContainer({ destinations }) {
   // state management
-  const [mainData, setMainData] = useState(true);
+  // const [mainData, setMainData] = useState(true);
   const [domesticData, setDomesticData] = useState(false);
   const [seasonalData, setSeasonalData] = useState();
   const [getButtonInnertext, setButtonInnertext] = useState(false);
@@ -33,12 +33,6 @@ export default function AirlineDisplayContainer({ destinations }) {
     );
     return dataList.length;
   }
-
-  // function getTotalDestinationNumber(target) {
-  //   if (target.currentTarget.innerText) {
-  //     setDestinatonNumber(destinations.destinations.map(a => a.name).length);
-  //   }
-  // }
 
   function getTotalMainFilteredDestinationNumber(e) {
     const number = destinations.destinations.map(a => a.name).length;
@@ -79,25 +73,24 @@ export default function AirlineDisplayContainer({ destinations }) {
     setButtonInnertext(false);
   }
 
-  function MainData(e) {
-    setDestinatonNumber(() =>
-      destinations.destinations.map(mainList => mainList.length),
-    );
-    // getTotalDestinationNumber(e);
-    getTotalMainFilteredDestinationNumber(e);
-    setLocationState("");
-    setMainData(true);
-    setInternationalData(true);
-    setSeasonalData(true);
-    setLocationShow(false);
-  }
+  // function MainData(e) {
+  //   setDestinatonNumber(() =>
+  //     destinations.destinations.map(mainList => mainList.length),
+  //   );
+  //   getTotalMainFilteredDestinationNumber(e);
+  //   setLocationState("");
+  //   // setMainData(true);
+  //   setInternationalData(true);
+  //   setSeasonalData(true);
+  //   setLocationShow(false);
+  // }
   function Domestic(e) {
     setDestinatonNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "false");
     setLocationState("");
     setDomesticData(true);
     setInternationalData(false);
-    setMainData(false);
+    // setMainData(false);
     setSeasonalData(false);
     setLocationShow(false);
   }
@@ -107,7 +100,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setLocationState("");
     setDomesticData(false);
     setInternationalData(true);
-    setMainData(false);
+    // setMainData(false);
     setSeasonalData(false);
     setLocationShow(false);
   }
@@ -117,7 +110,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setSeasonalData(true);
     setLocationState("");
     setDomesticData(false);
-    setMainData(false);
+    // setMainData(false);
     setInternationalData(false);
     setLocationShow(false);
   }
@@ -125,7 +118,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     getFilteredStatesDestinationNumber(e);
     setLocationState(e.target.value);
     setLocationShow(true);
-    setMainData(false);
+    // setMainData(false);
     setInternationalData(false);
     setDomesticData(false);
     setSeasonalData(false);
@@ -133,7 +126,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setAce("");
   }
   function resetDestination(e) {
-    setMainData(true);
+    // setMainData(true);
     destinations.destinations.map(airline =>
       setDestinatonNumber(airline.destinations.length),
     );
@@ -141,9 +134,9 @@ export default function AirlineDisplayContainer({ destinations }) {
   const changeValue = e => {
     setAce(e.target.value);
     setListType(e.target.value);
-    if (e.target.value === "all") {
-      MainData(e);
-    }
+    // if (e.target.value === "all") {
+    //   MainData(e);
+    // }
     if (e.target.value === "international") {
       InternationalData(e);
     }
@@ -157,12 +150,10 @@ export default function AirlineDisplayContainer({ destinations }) {
 
   return (
     <section className="container">
-      <div className="d-flex align-items-center justify-content-between">
-        <AirlineInformationDisplay
-          airline={destinations}
-          // onClick={() => getTotalAirlineDestinatonsNumber()}
-        />
+      <div className="d-flex flex-column flex-sm-column flex-xl-row justify-content-xl-between align-items-center">
+        <AirlineInformationDisplay airline={destinations} />
         {/* destination counter */}
+
         <TotalDestinationNumber
           totalFightDestinations={destinationNumber}
           airlineDestinationTotal={() =>
@@ -172,8 +163,11 @@ export default function AirlineDisplayContainer({ destinations }) {
       </div>
 
       {/* filter through airline data buttons */}
-      <section className="d-flex justify-content-between p-4 align-items-center mt-3 button-contain rounded">
-        <div>
+      <section
+        style={{ display: "flex", justifyContent: "space-between" }}
+        className="d-flex w-100 flex-column flex-sm-column flex-xl-row justify-content-xl-between align-items-center p-3 mt-3  mb-sm-5 mb-lg-4 mb-4 button-contain rounded"
+      >
+        <div className=" width mb-3 mb-lg-0" style={{ width: "40%" }}>
           <select
             className="form-select"
             onChange={e => changeValue(e)}
@@ -184,16 +178,16 @@ export default function AirlineDisplayContainer({ destinations }) {
             <option value="disabled" className="disabled" selected>
               Filter By
             </option>
-            <option value="all">All</option>
+            {/* <option value="all">All</option> */}
             <option value="domestic">Domestic</option>
             <option value="international">International</option>
             <option value="seasonal">Seasonal</option>
           </select>
         </div>
-        <div className="d-flex">
+        <div className="d-flex flex-column flex-xl-row flex-sm-column  align-items-xl-center justify-content-xl-end width">
           <AirlineDropdownList
             dropDownName={"Change Airline"}
-            main={MainData}
+            // main={MainData}
             resetDestinationTotal={e => resetDestination(e)}
           />
 
@@ -207,7 +201,7 @@ export default function AirlineDisplayContainer({ destinations }) {
       </section>
 
       {/* shows all destinations on initial page load (domestic, international, seasonal) */}
-      {mainData && <MainDestinationList destinations={destinations} />}
+      {/* {mainData && <MainDestinationList destinations={destinations} />} */}
 
       {/* shows international list */}
       {internationalData && (

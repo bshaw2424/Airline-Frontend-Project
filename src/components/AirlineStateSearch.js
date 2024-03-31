@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import StateList from "./StateList";
-import AirlineSearchResultsDisplay from "./AirlineSearchResultsDisplay";
+import DisplayAirportCodeTitle from "./DisplayAirportCodeTitle";
 import Error from "./Error";
 
 export default function AirlineStateSearch({
@@ -8,6 +8,8 @@ export default function AirlineStateSearch({
   targetCategoryValue,
   internationalSearchValue,
   selectOptionValue,
+  airportName,
+  mapSearch,
   message,
   messageDiv,
   isScrolled,
@@ -18,7 +20,6 @@ export default function AirlineStateSearch({
 
       if (element) {
         element.scrollIntoView({
-          alignToTop: true,
           behavior: "smooth",
         });
       }
@@ -39,47 +40,25 @@ export default function AirlineStateSearch({
   const lengthOfDestinations = getListOfDestinations();
 
   return (
-    <article className={lengthOfDestinations === 0 ? "mt-0" : "mt-5"}>
-      <div id="stateDestinationMap">
-        <div className="d-flex justify-content-evenly flex-column">
-          {lengthOfDestinations === 0 && (
-            <Error message={message} messageDiv={messageDiv} />
-          )}
-
-          {selectOptionValue === "state" && lengthOfDestinations !== 0 && (
-            <>
-              <StateList
-                dataList={airlineSearch}
-                searchValue={targetCategoryValue}
-                objectState={getListOfDestinations()}
-                internationalSearchValue={internationalSearchValue}
-              />
-              <AirlineSearchResultsDisplay
-                selectOptionValue={selectOptionValue}
-                airlineNumber={getListOfDestinations()}
-                targetValue={targetCategoryValue}
-              />
-            </>
-          )}
-
-          {selectOptionValue === "international" &&
-            lengthOfDestinations !== 0 && (
-              <>
-                <StateList
-                  dataList={airlineSearch}
-                  searchValue={targetCategoryValue}
-                  objectState={getListOfDestinations()}
-                  internationalSearchValue={internationalSearchValue}
-                />
-                <AirlineSearchResultsDisplay
-                  selectOptionValue={selectOptionValue}
-                  airlineNumber={getListOfDestinations()}
-                  targetValue={targetCategoryValue}
-                />
-              </>
-            )}
-        </div>
-      </div>
+    <article>
+      {mapSearch && lengthOfDestinations !== 0 ? (
+        <section id="stateDestinationMap">
+          <StateList
+            dataList={airlineSearch}
+            searchValue={targetCategoryValue}
+            objectState={getListOfDestinations()}
+            internationalSearchValue={internationalSearchValue}
+          />
+          <DisplayAirportCodeTitle
+            selectOption={selectOptionValue}
+            airlineAirportLength={lengthOfDestinations}
+            airportFormValue={targetCategoryValue}
+            airportName={airportName}
+          />
+        </section>
+      ) : (
+        <Error message={message} messageDiv={messageDiv} />
+      )}
     </article>
   );
 }

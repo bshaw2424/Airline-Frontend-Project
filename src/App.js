@@ -1,11 +1,11 @@
 import "./App.scss";
 import NavRoot from "./components/NavRoot";
 import Footer from "./components/Footer";
-import Destinations from "./components/Destinations";
 import Home from "./components/Home";
-import { destinationIndexLoader } from "./components/AirlineSearch";
-import AirlineData, { airlinedesLoader } from "./components/AirlineData";
-import { destinationsLoader } from "./components/Destinations";
+
+import { destinationIndexLoader } from "./components/AirlinesLanding";
+// import AirlineData, { airlinedesLoader } from "./components/AirlineData";
+import Destinations, { destinationsLoader } from "./components/Destinations";
 import {
   createBrowserRouter,
   createRoutesFromElements,

@@ -6,7 +6,6 @@ export default function AirlineMapList({
   onClick,
 }) {
   const [isMobile, setIsMobile] = useState(false);
-  const [airlineName, setAirlineName] = useState("Destinations");
 
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
@@ -32,10 +31,11 @@ export default function AirlineMapList({
             {airlineObjectData.map((airline, index) => (
               <li
                 key={`${airline.name}-${index}`}
-                className={`p-2 ps-4 me-4 ms-1 ${
+                className={`p-2 ps-2 me-4 ms-1 ${
                   activeStateWhenClicked[airline.name] ? "active" : ""
                 }`}
                 onClick={() => onClick(airline.name)}
+                style={{ fontSize: "1.2rem" }}
               >
                 {airline.name} - {airline.length}
               </li>
@@ -43,19 +43,19 @@ export default function AirlineMapList({
           </ul>
         </div>
       ) : (
-        <div class="dropdown mb-4 w-100">
+        <div class="dropdown mb-5 w-100">
           <button
-            class="btn btn-primary dropdown-toggle w-100"
+            class="btn btn-info dropdown-toggle w-100"
             type="button"
             id="dropdownMenuButton1"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             style={{ fontSize: "1.3rem" }}
           >
-            {airlineName}
+            Airport Destinations
           </button>
           <ul
-            class="dropdown-menu bg-blue w-100"
+            class="dropdown-menu bg-blue w-100 airlineList"
             aria-labelledby="dropdownMenuButton1"
             style={{ background: "rgba(255, 255, 255, 0.9)", zIndex: 1 }}
           >
@@ -71,7 +71,6 @@ export default function AirlineMapList({
                   activeStateWhenClicked[airline.name] ? "active" : ""
                 }`}
                 onClick={() => {
-                  setAirlineName(airline.name);
                   onClick(airline.name);
                 }}
               >

@@ -32,35 +32,4 @@ li {
     grid-template-columns: repeat(1, auto);
     width: 95%;
   }
-  .row .list-flex {
-    flex-direction: column;
-    padding: 0 1.5rem;
-  }
-  .pt-3 {
-    padding-top: 0 !important;
-  }
-  .px-5 {
-    padding: 0 1.5rem !important;
-  }
-  .width {
-    padding: 0;
-
-    h4 {
-      font-size: 2rem;
-      text-align: center;
-    }
-  }
-  .align-items-end {
-    align-items: flex-start !important;
-  }
-
-  .button-contain {
-    flex-direction: column;
-    div {
-      flex-direction: column;
-    }
-  }
-  .p-4 {
-    padding: 1rem 1.5rem !important;
-  }
 }

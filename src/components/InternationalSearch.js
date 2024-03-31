@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import DisclaimerMessage from "./DisclaimerMessage";
-import StateMap from "./StateMap";
 import StateList from "./StateList";
 
 export default function InternationalSearch({
   airlineSearch,
   targetCategoryValue,
   airlineName,
+  internationalSearchValue,
   isScrolled,
 }) {
   useEffect(() => {
@@ -42,13 +42,8 @@ export default function InternationalSearch({
           <StateList
             dataList={airlineSearch}
             searchValue={targetCategoryValue}
-            objectState={getListOfInternationalDestinations}
-          />
-
-          {/*  SHOWS CENTER POINT OF STATE USED INPUT */}
-          <StateMap
-            displayMap={airlineSearch}
-            centerPointOfMap={targetCategoryValue}
+            objectState={getListOfInternationalDestinations(airlineSearch)}
+            internationalSearchValue={internationalSearchValue}
           />
         </div>
       </div>

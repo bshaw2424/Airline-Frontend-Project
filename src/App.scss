@@ -21,17 +21,10 @@ a {
   color: #333;
 }
 
-.list-flex {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
 .width {
   width: 100%;
 }
-/* .airline-link {
-  background: hsla(176, 100%, 96%, 1);
-} */
+
 .airline-link:hover {
   background: hsla(176, 100%, 92%, 1);
   border: none;
@@ -39,20 +32,6 @@ a {
 .list-flex:nth-child(even) {
   background-color: hsla(216, 98%, 94%, 1);
   border: none;
-}
-
-.btn.filter-buttons {
-  background-color: $filter-buttons-background-color;
-  &.active:hover {
-    background-color: hsla(216, 98%, 64%, 1);
-  }
-  &.active:focus {
-    // outline: 1.5px solid #333;
-    // outline-offset: 4px;
-    background-color: hsla(216, 98%, 100%, 1);
-    color: #333;
-    outline: 2px solid hsla(216, 98%, 54%, 1);
-  }
 }
 
 .button-contain {

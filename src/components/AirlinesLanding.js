@@ -31,6 +31,7 @@ export default function AirlineLanding() {
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [error, setError] = useState();
+  const [dropDownValue, setDropDownValue] = useState(false);
 
   const getLowerCaseUniqueListOfStateDestination = () => {
     const airline = getAirlineDataFromLoader
@@ -144,6 +145,7 @@ export default function AirlineLanding() {
     }
 
     setFormValues("");
+    setDropDownValue(true);
 
     !displayMessageIfSearchInputNotFound(
       getAirlineDataFromLoader,
@@ -188,6 +190,7 @@ export default function AirlineLanding() {
           mapSearch={mapSearch}
           message={airportCodeErrorMessage}
           messageDiv={mapSearch}
+          value={dropDownValue}
           isScrolled={isScrolled}
         />
 

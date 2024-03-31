@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+
 import AirlineListDataLinks from "./AirlineListDataLinks";
 
 export default function Airlines({ targetInput, showIconForAirportCode }) {
@@ -36,7 +36,7 @@ export default function Airlines({ targetInput, showIconForAirportCode }) {
   return (
     <>
       <section
-        className="pt-3"
+        className="pt-3 mb-5"
         style={{ background: "rgba(173, 216, 230, 0.1)" }}
       >
         <AirlineListDataLinks
@@ -52,8 +52,8 @@ export default function Airlines({ targetInput, showIconForAirportCode }) {
   );
 }
 
-export const destinationIndexLoader = async () => {
-  const response = await axios.get(`http://localhost:8080/airlines/info`);
+// export const destinationIndexLoader = async () => {
+//   const response = await axios.get(`http://localhost:8080/airlines/info`);
 
-  return response.data;
-};
+//   return response.data;
+// };

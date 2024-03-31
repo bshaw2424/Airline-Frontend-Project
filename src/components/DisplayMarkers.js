@@ -3,6 +3,7 @@ import { Marker, InfoWindow } from "@react-google-maps/api";
 
 export default function DisplayMarkers({ coords, airlineIndex }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [isInfoWindowHovered, setIsInfoWindowHovered] = useState(false);
 
   const handleMarkerClick = title => {
     window.open(
@@ -17,8 +18,18 @@ export default function DisplayMarkers({ coords, airlineIndex }) {
     setSelectedMarker(marker);
   };
 
+  const handleInfoWindowHover = () => {
+    setIsInfoWindowHovered(true);
+  };
+
+  const handleInfoWindowExit = () => {
+    setIsInfoWindowHovered(false);
+  };
+
   const handleCloseInfoWindow = () => {
-    setSelectedMarker(null);
+    if (!isInfoWindowHovered) {
+      setSelectedMarker(null);
+    }
   };
 
   return (
@@ -38,11 +49,14 @@ export default function DisplayMarkers({ coords, airlineIndex }) {
               onClick={() => handleMarkerClick(title)}
             >
               {selectedMarker === coordinates && (
-                <InfoWindow>
+                <InfoWindow
+                  onCloseClick={handleCloseInfoWindow}
+                  onMouseOver={handleInfoWindowHover}
+                  onMouseOut={handleInfoWindowExit}
+                >
                   <div>
-                    <h5>{title}</h5>
-                    <p>Click on marker to view more details</p>
-                    {/* Additional content for the InfoWindow */}
+                    <h5 className="text-center">{title}</h5>
+                    <p>Click marker to view more details</p>
                   </div>
                 </InfoWindow>
               )}

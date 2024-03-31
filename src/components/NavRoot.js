@@ -8,14 +8,14 @@ export default function NavRoot() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          background: "hsla(226, 100%, 70%, 1)",
+          background: "hsl(51, 0%, 0%)",
           color: "#fff",
         }}
       >
-        <nav className="container nav d-flex justify-content-between align-items-center py-2">
+        <nav className="container d-flex justify-content-between align-items-center py-2">
           <h1>
             <Link to="/" className="navbar-brand">
-              LOGO
+              Flight In Range
             </Link>
           </h1>
           <div className="d-flex">

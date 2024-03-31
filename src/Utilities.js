@@ -1,4 +1,6 @@
-export function getStates(airlineDestinationLocation) {
+import axios from "axios";
+
+export const getStates = airlineDestinationLocation => {
   const getLocationDestinations = airlineDestinationLocation.destinations.map(
     destinationStates => destinationStates.state,
   );
@@ -7,16 +9,16 @@ export function getStates(airlineDestinationLocation) {
     .sort();
 
   return filterStates;
-}
+};
 
-export function getAirlineNames(airlineNames) {
+export const getAirlineNames = airlineNames => {
   const getAllNamesOfAirlines = airlineNames.destinations
     .map(airline => airline)
     .sort();
   return getAllNamesOfAirlines;
-}
+};
 
-export function airlineNamesForDropdownList(airlineNames) {
+export const airlineNamesForDropdownList = airlineNames => {
   const getAirlineNames = airlineNames.map(airline => (
     <a
       key={airline._id}
@@ -27,7 +29,7 @@ export function airlineNamesForDropdownList(airlineNames) {
     </a>
   ));
   return getAirlineNames;
-}
+};
 
 export const getNumbers = airlines => airlines.map(a => a.destinations.length);
 
@@ -148,7 +150,7 @@ export const getNumberLengthOfSearch = (
     airlines,
     searchCategory,
     searchInput,
-  ).filter(airlineInArray => airlineInArray === true).length;
+  ).filter(airlineInArray => airlineInArray === false).length;
 
 export const getCitiesDestinationsList = (cityArray, userTargetTextValue) => {
   const cities = cityArray
@@ -276,4 +278,36 @@ const getDomesticIcaoCodes = getIcaoCodeFromIataCode => {
 
 export const changeAirportCodeToIcaoCode = destinationAirportCode => {
   return getDomesticIcaoCodes(destinationAirportCode);
+};
+
+export const getUniqueListOfAirportCodes = arrayOfCodes => {
+  const allAirportCodesThatMatchesFromUserInput = arrayOfCodes.flatMap(code =>
+    code.codes.map(airportCodes => airportCodes.code),
+  );
+
+  return [...new Set(allAirportCodesThatMatchesFromUserInput)];
+};
+
+//  axios data call
+export const axiosCallToLatitudeAndLongitudeCoordinates = async airportCode => {
+  const apiKey = "YD07ub+l4kuNqmk2vsP5vg==i0tJXQxsPIm8k20l";
+  try {
+    const url = `https://api.api-ninjas.com/v1/airports?iata=${airportCode}`;
+
+    // axios call with the url
+    const response = await axios.get(url, {
+      headers: { "X-Api-Key": apiKey },
+    });
+
+    // axios response data
+    const airportData = response.data[0];
+
+    if (airportData) {
+      const { latitude, longitude } = airportData;
+      return { lat: latitude, lng: longitude };
+    }
+  } catch (error) {
+    console.error(`Error fetching coordinates for ${airportCode}:`, error);
+    return null;
+  }
 };
