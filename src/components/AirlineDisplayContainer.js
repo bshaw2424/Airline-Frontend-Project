@@ -5,7 +5,6 @@ import DisplayFilterList from "./DisplayFilterList";
 import { getStates, upperCaseFirstLetterOfWord } from "../Utilities";
 import ShowDataList from "./ShowDataList";
 import StateFilter from "./StateFilter";
-import MainDestinationList from "./MainDestinationList";
 import TotalDestinationNumber from "./TotalDestinationNumber";
 import AirlineInformationDisplay from "./AirlineInformationDisplay";
 import NotificationPage from "./NotificationPage";
@@ -13,17 +12,20 @@ import NotificationPage from "./NotificationPage";
 
 export default function AirlineDisplayContainer({ destinations }) {
   // state management
-  // const [mainData, setMainData] = useState(true);
-  const [domesticData, setDomesticData] = useState(false);
-  const [seasonalData, setSeasonalData] = useState();
-  const [getButtonInnertext, setButtonInnertext] = useState(false);
-  const [internationalData, setInternationalData] = useState();
-  const [destinationNumber, setDestinatonNumber] = useState(
-    destinations.destinations.length,
+
+  const [domesticData, setDomesticData] = useState(true);
+  const [internationalData, setInternationalData] = useState(false);
+  const [seasonalData, setSeasonalData] = useState(false);
+
+  const [notificationMessage, setNotificationMessage] = useState(false);
+  const [destinationNumber, setDestinationNumber] = useState(
+    destinations.destinations.filter(
+      listData => listData.international === "false",
+    ).length,
   );
   const [locationState, setLocationState] = useState(0);
   const [locationShow, setLocationShow] = useState(true);
-  const [ace, setAce] = useState("");
+  const [destinationErrorMessage, setDestinationErrorMessage] = useState("");
   const [listType, setListType] = useState();
 
   // Methods
@@ -34,29 +36,21 @@ export default function AirlineDisplayContainer({ destinations }) {
     return dataList.length;
   }
 
-  function getTotalMainFilteredDestinationNumber(e) {
-    const number = destinations.destinations.map(a => a.name).length;
-
-    if (e.target.value) {
-      setDestinatonNumber(`${number}`);
-      setButtonInnertext(true);
-      setAce(`no ${e.target.value.toUpperCase()} Destinations.`);
-    }
-  }
-
   function getTotalFilteredDestinationNumber(e, category, value) {
     const destinationTotalNumber = destinations.destinations
       .filter(destination => destination[category] === value)
       .map(a => a.name).length;
 
     if (destinationTotalNumber > 1) {
-      setDestinatonNumber(destinationTotalNumber);
-      setButtonInnertext(false);
+      setDestinationNumber(destinationTotalNumber);
+      setNotificationMessage(false);
     }
     if (destinationTotalNumber < 1) {
-      setButtonInnertext(true);
-      setDestinatonNumber(destinationTotalNumber);
-      setAce(`No ${upperCaseFirstLetterOfWord(e.target.value)} Destinations`);
+      setNotificationMessage(true);
+      setDestinationNumber(destinationTotalNumber);
+      setDestinationErrorMessage(
+        `No ${upperCaseFirstLetterOfWord(e.target.value)} Destinations`,
+      );
     }
   }
 
@@ -66,51 +60,37 @@ export default function AirlineDisplayContainer({ destinations }) {
     ).length;
 
     if (targetElement.target.value) {
-      setDestinatonNumber(
+      setDestinationNumber(
         `${targetElement.target.value} - ${getDestinationStateDropdownTotal}`,
       );
     }
-    setButtonInnertext(false);
+    setNotificationMessage(false);
   }
 
-  // function MainData(e) {
-  //   setDestinatonNumber(() =>
-  //     destinations.destinations.map(mainList => mainList.length),
-  //   );
-  //   getTotalMainFilteredDestinationNumber(e);
-  //   setLocationState("");
-  //   // setMainData(true);
-  //   setInternationalData(true);
-  //   setSeasonalData(true);
-  //   setLocationShow(false);
-  // }
   function Domestic(e) {
-    setDestinatonNumber(filteredLists("international", "false"));
+    setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "false");
     setLocationState("");
     setDomesticData(true);
     setInternationalData(false);
-    // setMainData(false);
     setSeasonalData(false);
     setLocationShow(false);
   }
   function InternationalData(e) {
-    setDestinatonNumber(filteredLists("international", "false"));
+    setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "true");
     setLocationState("");
     setDomesticData(false);
     setInternationalData(true);
-    // setMainData(false);
     setSeasonalData(false);
     setLocationShow(false);
   }
   function SeasonalData(e) {
-    setDestinatonNumber(filteredLists("seasonal", "false"));
+    setDestinationNumber(filteredLists("seasonal", "false"));
     getTotalFilteredDestinationNumber(e, "seasonal", "true");
     setSeasonalData(true);
     setLocationState("");
     setDomesticData(false);
-    // setMainData(false);
     setInternationalData(false);
     setLocationShow(false);
   }
@@ -118,25 +98,14 @@ export default function AirlineDisplayContainer({ destinations }) {
     getFilteredStatesDestinationNumber(e);
     setLocationState(e.target.value);
     setLocationShow(true);
-    // setMainData(false);
     setInternationalData(false);
     setDomesticData(false);
     setSeasonalData(false);
     setListType("");
-    setAce("");
+    setDestinationErrorMessage("");
   }
-  function resetDestination(e) {
-    // setMainData(true);
-    destinations.destinations.map(airline =>
-      setDestinatonNumber(airline.destinations.length),
-    );
-  }
-  const changeValue = e => {
-    setAce(e.target.value);
-    setListType(e.target.value);
-    // if (e.target.value === "all") {
-    //   MainData(e);
-    // }
+
+  const showAirlineFlightList = e => {
     if (e.target.value === "international") {
       InternationalData(e);
     }
@@ -148,18 +117,29 @@ export default function AirlineDisplayContainer({ destinations }) {
     }
   };
 
+  function resetDestination() {
+    setDomesticData(true);
+    setLocationState(false);
+    setListType("");
+    setDestinationNumber(
+      destinations.destinatons.filter(item => item.international === "false")
+        .length,
+    );
+  }
+
+  // select form
+  const changeValue = e => {
+    setDestinationErrorMessage(e.target.value);
+    setListType(e.target.value);
+    showAirlineFlightList(e);
+  };
+
   return (
     <section className="container">
       <div className="d-flex flex-column flex-sm-column flex-xl-row justify-content-xl-between align-items-center">
         <AirlineInformationDisplay airline={destinations} />
-        {/* destination counter */}
 
-        <TotalDestinationNumber
-          totalFightDestinations={destinationNumber}
-          airlineDestinationTotal={() =>
-            setDestinatonNumber(destinations.destinations.length)
-          }
-        />
+        <TotalDestinationNumber totalFightDestinations={destinationNumber} />
       </div>
 
       {/* filter through airline data buttons */}
@@ -175,11 +155,9 @@ export default function AirlineDisplayContainer({ destinations }) {
             name=""
             id=""
           >
-            <option value="disabled" className="disabled" selected>
-              Filter By
+            <option value="domestic" selected>
+              Domestic
             </option>
-            {/* <option value="all">All</option> */}
-            <option value="domestic">Domestic</option>
             <option value="international">International</option>
             <option value="seasonal">Seasonal</option>
           </select>
@@ -187,8 +165,7 @@ export default function AirlineDisplayContainer({ destinations }) {
         <div className="d-flex flex-column flex-xl-row flex-sm-column  align-items-xl-center justify-content-xl-end width">
           <AirlineDropdownList
             dropDownName={"Change Airline"}
-            // main={MainData}
-            resetDestinationTotal={e => resetDestination(e)}
+            resetDestinationTotal={resetDestination}
           />
 
           <StateFilter
@@ -199,9 +176,6 @@ export default function AirlineDisplayContainer({ destinations }) {
           />
         </div>
       </section>
-
-      {/* shows all destinations on initial page load (domestic, international, seasonal) */}
-      {/* {mainData && <MainDestinationList destinations={destinations} />} */}
 
       {/* shows international list */}
       {internationalData && (
@@ -236,7 +210,10 @@ export default function AirlineDisplayContainer({ destinations }) {
           targetValue={locationState}
         />
       )}
-      {getButtonInnertext && <NotificationPage destinationType={ace} />}
+
+      {notificationMessage && (
+        <NotificationPage destinationType={destinationErrorMessage} />
+      )}
     </section>
   );
 }
