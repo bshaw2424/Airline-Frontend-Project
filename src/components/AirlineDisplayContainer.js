@@ -151,13 +151,9 @@ export default function AirlineDisplayContainer({ destinations }) {
           <select
             className="form-select"
             onChange={e => changeValue(e)}
-            value={listType}
-            name=""
-            id=""
+            defaultValue="domestic"
           >
-            <option value="domestic" selected>
-              Domestic
-            </option>
+            <option value="domestic">Domestic</option>
             <option value="international">International</option>
             <option value="seasonal">Seasonal</option>
           </select>

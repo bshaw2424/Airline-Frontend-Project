@@ -35,7 +35,7 @@ export default function AirlineMapList({
                   activeStateWhenClicked[airline.name] ? "active" : ""
                 }`}
                 onClick={() => onClick(airline.name)}
-                style={{ fontSize: "1.2rem" }}
+                style={{ fontSize: "1.125rem" }}
               >
                 {airline.name} - {airline.length}
               </li>
@@ -43,9 +43,9 @@ export default function AirlineMapList({
           </ul>
         </div>
       ) : (
-        <div class="dropdown mb-5 w-100">
+        <div className="dropdown mb-5 w-100">
           <button
-            class="btn btn-info dropdown-toggle w-100"
+            className="btn btn-info dropdown-toggle w-100"
             type="button"
             id="dropdownMenuButton1"
             data-bs-toggle="dropdown"
@@ -55,7 +55,7 @@ export default function AirlineMapList({
             Airport Destinations
           </button>
           <ul
-            class="dropdown-menu bg-blue w-100 airlineList"
+            className="dropdown-menu bg-blue w-100 airlineList"
             aria-labelledby="dropdownMenuButton1"
             style={{ background: "rgba(255, 255, 255, 0.9)", zIndex: 1 }}
           >

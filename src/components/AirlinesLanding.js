@@ -27,7 +27,7 @@ export default function AirlineLanding() {
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
   const [airportSearch, setAirportSearch] = useState(null);
-  const [mapSearch, setMapSearch] = useState(null);
+  const [mapSearch, setMapSearch] = useState(false);
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [error, setError] = useState();
@@ -48,6 +48,11 @@ export default function AirlineLanding() {
   const findValue = getLowerCaseUniqueListOfStateDestination().includes(
     previousFormValue.toLowerCase(),
   );
+
+  function removeNonAlphabetic(inputString) {
+    // Use a regular expression to match only alphabetic characters
+    return inputString.replace(/[^a-zA-Z\s]/g, "");
+  }
 
   const objectOfAirlineLengthAndAirportName = () => {
     return {
@@ -76,11 +81,11 @@ export default function AirlineLanding() {
   if (selectOption === "airport_code") {
     errorMessage = "Airport Code";
   } else {
-    errorMessage = "State or International Destinaiton";
+    errorMessage = "State or International Destination";
   }
 
   function formChange(e) {
-    setFormValues(e.target.value);
+    setFormValues(removeNonAlphabetic(e.target.value));
   }
 
   // gets the value from the select element
@@ -128,13 +133,15 @@ export default function AirlineLanding() {
       setMapSearch(true);
       setAirportSearch(false);
       setError(false);
-    } else {
-      setError(true);
-      setMapSearch(false);
     }
 
     setAirportCodeErrorMessage(
-      `${formValues.toUpperCase()} is not a valid ${errorMessage}`,
+      <>
+        <span style={{ textDecoration: "underline" }}>
+          {formValues.toUpperCase()}
+        </span>{" "}
+        is not a valid {errorMessage}
+      </>,
     );
 
     if (airlineAirportLength === 0 && selectOption === "airport_code") {

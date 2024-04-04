@@ -15,10 +15,10 @@ export default function SelectMenu({ onChange, defaultValue }) {
         className="form-select p-2"
         aria-label="Default select example"
         id="search-options"
-        defaultValue={defaultValue}
+        defaultValue="select_option"
         onChange={onChange}
       >
-        <option value="select_option" disabled selected>
+        <option value="select_option" disabled>
           Select an option
         </option>
         <option value="state">State / Country</option>

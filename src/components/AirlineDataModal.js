@@ -39,7 +39,7 @@ export default function AirlineDataModal({ airlines, id }) {
           marginTop: "10rem",
         }}
         id={id}
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="airlineModalDataLabel"
         aria-hidden="true"
       >

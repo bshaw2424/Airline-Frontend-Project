@@ -36,7 +36,7 @@ export default function Airlines({ targetInput, showIconForAirportCode }) {
   return (
     <>
       <section
-        className="pt-3 mb-5"
+        className="pt-3 mb-4"
         style={{ background: "rgba(173, 216, 230, 0.1)" }}
       >
         <AirlineListDataLinks

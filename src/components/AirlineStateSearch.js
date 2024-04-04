@@ -38,11 +38,34 @@ export default function AirlineStateSearch({
   };
 
   const lengthOfDestinations = getListOfDestinations();
+  const mapShowStyles = {
+    padding: "7rem 0",
+    margin: "3rem 0",
+    paddingRight: "2rem",
+  };
+
+  const mapRemoveStyles = {
+    padding: "0rem",
+    margin: "0rem",
+    paddingRight: "0rem",
+  };
 
   return (
-    <article>
+    <article
+      id="stateDestinationMap"
+      className={
+        mapSearch && lengthOfDestinations !== 0
+          ? "border shadow-sm rounded"
+          : ""
+      }
+      style={
+        mapSearch && lengthOfDestinations !== 0
+          ? mapShowStyles
+          : mapRemoveStyles
+      }
+    >
       {mapSearch && lengthOfDestinations !== 0 ? (
-        <section id="stateDestinationMap">
+        <section>
           <StateList
             dataList={airlineSearch}
             searchValue={targetCategoryValue}
