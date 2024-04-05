@@ -198,6 +198,7 @@ export default function AirlineLanding() {
           message={airportCodeErrorMessage}
           messageDiv={mapSearch}
           value={dropDownValue}
+          closeButton={setMapSearch}
           isScrolled={isScrolled}
         />
 

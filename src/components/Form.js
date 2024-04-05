@@ -13,7 +13,7 @@ export default function Form({
   return (
     <>
       <div
-        className="p-3 mb-1 shadow-sm"
+        className="p-3  mb-1 shadow-sm container justify-content-center align-items-center"
         style={{
           position: "sticky",
           top: 0,
@@ -22,15 +22,17 @@ export default function Form({
         }}
       >
         <form onSubmit={onSubmit} className="py-2">
-          <div className="row d-flex justify-content-center">
-            {/* select dropdown menu to choose between state, international, or airport code */}
-            <SelectMenu onChange={handleOptionChange} />
-            <AirlineQuickSearch value={formValue} onChange={formChange} />
-            <div className="col-sm-3 w-sm-100 w-xl-10 mt-2 mt-sm-2">
+          <div className="row d-flex flex-xl-column">
+            <div className="d-lg-flex  flex-lg-row justify-content-between align-items-lg-center justify-content-lg-between flex-sm-column">
+              <SelectMenu onChange={handleOptionChange} />
+              <AirlineQuickSearch value={formValue} onChange={formChange} />
+            </div>
+            <div className="d-flex w-sm-100 w-lg-100 mt-2 mt-sm-2 mt-lg-4 align-items-center justify-content-center">
               <Button
                 buttonType="submit"
-                className="btn btn-primary w-100"
+                className="btn btn-primary w-50"
                 href="#stateDestinationMap"
+                style={{ width: "75%" }}
               >
                 Submit
               </Button>

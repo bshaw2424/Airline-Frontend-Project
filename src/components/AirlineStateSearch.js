@@ -12,6 +12,7 @@ export default function AirlineStateSearch({
   mapSearch,
   message,
   messageDiv,
+  closeButton,
   isScrolled,
 }) {
   useEffect(() => {
@@ -50,6 +51,10 @@ export default function AirlineStateSearch({
     paddingRight: "0rem",
   };
 
+  function closeMap() {
+    closeButton(false);
+  }
+
   return (
     <article
       id="stateDestinationMap"
@@ -58,12 +63,29 @@ export default function AirlineStateSearch({
           ? "border shadow-sm rounded"
           : ""
       }
-      style={
-        mapSearch && lengthOfDestinations !== 0
+      style={{
+        position: "relative",
+        ...(mapSearch && lengthOfDestinations !== 0
           ? mapShowStyles
-          : mapRemoveStyles
-      }
+          : mapRemoveStyles),
+      }}
     >
+      {mapSearch && lengthOfDestinations !== 0 ? (
+        <span
+          className="bg-dark p-2 rounded-circle"
+          style={{ position: "absolute", top: 370, right: -20 }}
+        >
+          <button
+            type="button"
+            className="btn-close btn-close-white"
+            aria-label="Close"
+            onClick={closeMap}
+          ></button>
+        </span>
+      ) : (
+        ""
+      )}
+
       {mapSearch && lengthOfDestinations !== 0 ? (
         <section>
           <StateList

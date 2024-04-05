@@ -1,18 +1,10 @@
-export default function SelectMenu({ onChange, defaultValue }) {
+export default function SelectMenu({ onChange }) {
   return (
-    <div className="col-sm-3 d-flex">
-      <label
-        style={{
-          alignSelf: "center",
-          maxWidth: "100%",
-          fontSize: "1rem",
-        }}
-        htmlFor="default"
-      ></label>
+    <div className="d-flex align-items-center justify-content-center w-75 w-sm-100 w-lg-75 me-4">
+      <label htmlFor="default"></label>
       <select
-        style={{ maxWidth: "100%" }}
         name="airlineOptions"
-        className="form-select p-2"
+        className="form-select"
         aria-label="Default select example"
         id="search-options"
         defaultValue="select_option"
