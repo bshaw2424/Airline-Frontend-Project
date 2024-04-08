@@ -10,36 +10,36 @@ export default function Form({
   formChange,
   show,
 }) {
+  const searchBarStyles = {
+    position: "sticky",
+    top: 0,
+    zIndex: 2,
+    background: "rgba(255,255,255, 0.6)",
+  };
   return (
     <>
-      <div
-        className="p-3  mb-1 shadow-sm container justify-content-center align-items-center"
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 2,
-          background: "rgba(255,255,255, 0.6)",
-        }}
+      <section
+        className="py-3 py-sm-0 py-lg-3 mb-1 shadow-sm"
+        style={searchBarStyles}
       >
-        <form onSubmit={onSubmit} className="py-2">
-          <div className="row d-flex flex-xl-column">
-            <div className="d-lg-flex  flex-lg-row justify-content-between align-items-lg-center justify-content-lg-between flex-sm-column">
+        <form onSubmit={onSubmit} className="container py-2 py-sm-0 w-100">
+          <div className="d-lg-flex">
+            <div className="d-lg-flex w-100">
               <SelectMenu onChange={handleOptionChange} />
               <AirlineQuickSearch value={formValue} onChange={formChange} />
             </div>
-            <div className="d-flex w-sm-100 w-lg-100 mt-2 mt-sm-2 mt-lg-4 align-items-center justify-content-center">
+            <div className="w-100 d-flex flex-sm-column flex-lg-row justify-content-lg-end">
               <Button
                 buttonType="submit"
-                className="btn btn-primary w-50"
+                className="btn btn-primary w-100 ms-sm-1 ms-sm-0 ms-lg-5 mt-3 mt-sm-3 mt-lg-0"
                 href="#stateDestinationMap"
-                style={{ width: "75%" }}
               >
                 Submit
               </Button>
             </div>
           </div>
         </form>
-      </div>
+      </section>
     </>
   );
 }

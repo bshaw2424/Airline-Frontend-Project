@@ -1,9 +1,9 @@
 export default function AirlineQuickSearch({ value, onChange }) {
   return (
-    <div className="w-100">
+    <>
       <label htmlFor="airportDataInput"></label>
       <input
-        className="p-2 w-75 w-sm-100 w-lg-75"
+        className="p-2 w-100 w-sm-75 mt-3 mt-sm-3 mt-lg-0"
         type="text"
         name="data"
         id="airportDataInput"
@@ -11,6 +11,6 @@ export default function AirlineQuickSearch({ value, onChange }) {
         value={value}
         required
       />
-    </div>
+    </>
   );
 }

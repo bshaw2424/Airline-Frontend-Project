@@ -1,10 +1,10 @@
 export default function SelectMenu({ onChange }) {
   return (
-    <div className="d-flex align-items-center justify-content-center w-75 w-sm-100 w-lg-75 me-4">
+    <>
       <label htmlFor="default"></label>
       <select
         name="airlineOptions"
-        className="form-select"
+        className="form-select w-100 w-sm-50 py-2 me-4"
         aria-label="Default select example"
         id="search-options"
         defaultValue="select_option"
@@ -17,6 +17,6 @@ export default function SelectMenu({ onChange }) {
 
         <option value="airport_code">Airport Code</option>
       </select>
-    </div>
+    </>
   );
 }
