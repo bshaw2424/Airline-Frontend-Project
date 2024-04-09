@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import StateList from "./StateList";
 import DisplayAirportCodeTitle from "./DisplayAirportCodeTitle";
 import Error from "./Error";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AirlineStateSearch({
   airlineSearch,
@@ -42,13 +43,12 @@ export default function AirlineStateSearch({
   const mapShowStyles = {
     padding: "7rem 0",
     margin: "3rem 0",
-    paddingRight: "2rem",
   };
 
   const mapRemoveStyles = {
     padding: "0rem",
     margin: "0rem",
-    paddingRight: "0rem",
+    // paddingRight: "0rem",
   };
 
   function closeMap() {
@@ -60,7 +60,7 @@ export default function AirlineStateSearch({
       id="stateDestinationMap"
       className={
         mapSearch && lengthOfDestinations !== 0
-          ? "border shadow-sm rounded"
+          ? "border border-2 rounded pe-sm-0 pe-lg-4"
           : ""
       }
       style={{
@@ -70,40 +70,49 @@ export default function AirlineStateSearch({
           : mapRemoveStyles),
       }}
     >
-      {mapSearch && lengthOfDestinations !== 0 ? (
-        <span
-          className="bg-dark p-2 rounded-circle"
-          style={{ position: "absolute", top: 370, right: -20 }}
-        >
-          <button
-            type="button"
-            className="btn-close btn-close-white"
-            aria-label="Close"
-            onClick={closeMap}
-          ></button>
-        </span>
-      ) : (
-        ""
-      )}
+      <div className="container">
+        {mapSearch && lengthOfDestinations !== 0 ? (
+          <span
+            className="bg-light p-2 rounded-circle border border-1 border-dark"
+            style={{ position: "absolute", top: 360, right: -23, zIndex: 2 }}
+          >
+            <button
+              type="button"
+              className="btn-close btn-close-dark"
+              aria-label="Close"
+              onClick={closeMap}
+            ></button>
+          </span>
+        ) : (
+          ""
+        )}
+        <AnimatePresence initial={false}>
+          {mapSearch && lengthOfDestinations !== 0 && (
+            <motion.section
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <StateList
+                dataList={airlineSearch}
+                searchValue={targetCategoryValue}
+                objectState={getListOfDestinations()}
+                internationalSearchValue={internationalSearchValue}
+              />
+              <DisplayAirportCodeTitle
+                selectOption={selectOptionValue}
+                airlineAirportLength={lengthOfDestinations}
+                airportFormValue={targetCategoryValue}
+                airportName={airportName}
+              />
+            </motion.section>
+          )}{" "}
+        </AnimatePresence>
 
-      {mapSearch && lengthOfDestinations !== 0 ? (
-        <section>
-          <StateList
-            dataList={airlineSearch}
-            searchValue={targetCategoryValue}
-            objectState={getListOfDestinations()}
-            internationalSearchValue={internationalSearchValue}
-          />
-          <DisplayAirportCodeTitle
-            selectOption={selectOptionValue}
-            airlineAirportLength={lengthOfDestinations}
-            airportFormValue={targetCategoryValue}
-            airportName={airportName}
-          />
-        </section>
-      ) : (
-        <Error message={message} messageDiv={messageDiv} />
-      )}
+        {mapSearch && lengthOfDestinations === 0 && (
+          <Error message={message} messageDiv={messageDiv} />
+        )}
+      </div>
     </article>
   );
 }
