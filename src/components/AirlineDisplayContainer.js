@@ -1,14 +1,15 @@
 // import statements
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AirlineDropdownList from "./AirlineDropdownList";
 import DisplayFilterList from "./DisplayFilterList";
-import { getStates, upperCaseFirstLetterOfWord } from "../Utilities";
+import { upperCaseFirstLetterOfWord } from "../Utilities";
 import ShowDataList from "./ShowDataList";
 import StateFilter from "./StateFilter";
 import TotalDestinationNumber from "./TotalDestinationNumber";
 import AirlineInformationDisplay from "./AirlineInformationDisplay";
 import NotificationPage from "./NotificationPage";
 import Loader from "./Loader";
+import { DestinationCategorySelect } from "./DestinationCategorySelect";
 // import e from "cors";
 
 export default function AirlineDisplayContainer({ destinations }) {
@@ -17,6 +18,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [domesticData, setDomesticData] = useState(true);
   const [internationalData, setInternationalData] = useState(false);
   const [seasonalData, setSeasonalData] = useState(false);
+  const [selectChange, setSelectChange] = useState(false);
 
   const [notificationMessage, setNotificationMessage] = useState(false);
   const [destinationNumber, setDestinationNumber] = useState(
@@ -24,11 +26,10 @@ export default function AirlineDisplayContainer({ destinations }) {
       listData => listData.international === "false",
     ).length,
   );
-  const [locationState, setLocationState] = useState(0);
+  const [locationState, setLocationState] = useState("");
   const [locationShow, setLocationShow] = useState(true);
   const [destinationErrorMessage, setDestinationErrorMessage] = useState("");
 
-  const [listType, setListType] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   // Methods
@@ -97,6 +98,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(false);
     setLocationShow(false);
   }
+
   function handleLocationChange(e) {
     getFilteredStatesDestinationNumber(e);
     setLocationState(e.target.value);
@@ -104,43 +106,27 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(false);
     setDomesticData(false);
     setSeasonalData(false);
-    setListType("");
     setDestinationErrorMessage("");
   }
 
-  console.log(locationState);
-
-  const showAirlineFlightList = e => {
-    if (e.target.value === "international") {
-      InternationalData(e);
-    }
-    if (e.target.value === "domestic") {
-      Domestic(e);
-    }
-    if (e.target.value === "seasonal") {
-      SeasonalData(e);
-    }
-  };
+  useEffect(() => {
+    setDestinationNumber(
+      destinations.destinations.filter(
+        listData => listData.international === "false",
+      ).length,
+    );
+  }, [destinations.destinations]);
 
   function resetDestination() {
     setIsLoading(true);
     setDomesticData(true);
-    setLocationState(false);
-    setListType("");
-    setDestinationNumber(
-      destinations.destinatons.filter(item => item.international === "false")
-        .length,
-    );
   }
 
-  // select form
-  const changeValue = e => {
-    setDestinationErrorMessage(e.target.value);
-    setListType(e.target.value);
-    setLocationState("Select State");
-    showAirlineFlightList(e);
-    setLocationState(0);
-  };
+  useEffect(() => {
+    if (!domesticData) {
+      setSelectChange(true);
+    }
+  }, [domesticData, selectChange]);
 
   return (
     <>
@@ -171,29 +157,20 @@ export default function AirlineDisplayContainer({ destinations }) {
             style={{ display: "flex", justifyContent: "space-between" }}
             className="d-flex w-100 flex-column flex-sm-column flex-xl-row justify-content-xl-between align-items-center p-3 mt-3  mb-sm-5 mb-lg-4 mb-4 button-contain rounded"
           >
-            <div className="width mb-3 mb-lg-0">
-              <select
-                className="form-select"
-                style={{ width: "50%" }}
-                onChange={e => changeValue(e)}
-                defaultValue="domestic"
-              >
-                <option value="domestic">Domestic</option>
-                <option value="international">International</option>
-                <option value="seasonal">Seasonal</option>
-              </select>
-            </div>
+            <DestinationCategorySelect
+              InternationalData={InternationalData}
+              Domestic={Domestic}
+              SeasonalData={SeasonalData}
+              setDestinationErrorMessage={setDestinationErrorMessage}
+              selectValue={selectChange}
+            />
+
             <div className="d-flex flex-column flex-xl-row flex-sm-column  align-items-xl-center justify-content-xl-end width">
-              <AirlineDropdownList
-                dropDownName={"Change Airline"}
-                getAirlineUrl={resetDestination}
-              />
+              <AirlineDropdownList getAirlineUrl={resetDestination} />
 
               <StateFilter
-                dropDownName={"Filter By State"}
-                state={getStates(destinations)}
-                onChange={e => handleLocationChange(e)}
-                value={locationState}
+                onChange={handleLocationChange}
+                destinations={destinations}
               />
             </div>
           </section>
@@ -228,7 +205,7 @@ export default function AirlineDisplayContainer({ destinations }) {
 
           {locationShow && (
             <DisplayFilterList
-              stateLocationData={destinations}
+              getDestinationsData={destinations}
               targetValue={locationState}
             />
           )}
