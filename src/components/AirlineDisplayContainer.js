@@ -19,6 +19,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [internationalData, setInternationalData] = useState(false);
   const [seasonalData, setSeasonalData] = useState(false);
   const [selectChange, setSelectChange] = useState(false);
+  const [dropdownItem, setDropdownItem] = useState(false);
 
   const [notificationMessage, setNotificationMessage] = useState(false);
   const [destinationNumber, setDestinationNumber] = useState(
@@ -107,7 +108,17 @@ export default function AirlineDisplayContainer({ destinations }) {
     setDomesticData(false);
     setSeasonalData(false);
     setDestinationErrorMessage("");
+    setSelectChange(false);
   }
+
+  function resetDestination() {
+    setIsLoading(true);
+    setDomesticData(true);
+  }
+
+  useEffect(() => {
+    !domesticData && setSelectChange(true);
+  }, [domesticData, selectChange]);
 
   useEffect(() => {
     setDestinationNumber(
@@ -116,17 +127,6 @@ export default function AirlineDisplayContainer({ destinations }) {
       ).length,
     );
   }, [destinations.destinations]);
-
-  function resetDestination() {
-    setIsLoading(true);
-    setDomesticData(true);
-  }
-
-  useEffect(() => {
-    if (!domesticData) {
-      setSelectChange(true);
-    }
-  }, [domesticData, selectChange]);
 
   return (
     <>
@@ -171,6 +171,7 @@ export default function AirlineDisplayContainer({ destinations }) {
               <StateFilter
                 onChange={handleLocationChange}
                 destinations={destinations}
+                dropdownItem={dropdownItem}
               />
             </div>
           </section>
