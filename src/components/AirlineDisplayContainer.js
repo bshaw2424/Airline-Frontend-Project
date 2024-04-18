@@ -59,6 +59,16 @@ export default function AirlineDisplayContainer({ destinations }) {
     }
   }
 
+  const loadingPromise = () => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1100);
+      resolve();
+      setIsLoading(true);
+    });
+  };
+
   function getFilteredStatesDestinationNumber(targetElement) {
     const getDestinationStateDropdownTotal = destinations.destinations.filter(
       a => a.state === targetElement.target.value,
@@ -100,26 +110,13 @@ export default function AirlineDisplayContainer({ destinations }) {
     setLocationShow(false);
   }
 
-  function handleLocationChange(e) {
-    getFilteredStatesDestinationNumber(e);
-    setLocationState(e.target.value);
-    setLocationShow(true);
-    setInternationalData(false);
-    setDomesticData(false);
-    setSeasonalData(false);
-    setDestinationErrorMessage("");
-    setSelectChange(false);
-  }
-
-  function resetDestination() {
-    setIsLoading(true);
-    setDomesticData(true);
-  }
-
+  // resets the destination select when the state/country select menu is active
   useEffect(() => {
     !domesticData && setSelectChange(true);
-  }, [domesticData, selectChange]);
+  }, [domesticData, selectChange, dropdownItem]);
 
+  // change number of flights total to correspond with associated airline when airline value changed.
+  // Defaults to Domestic total
   useEffect(() => {
     setDestinationNumber(
       destinations.destinations.filter(
@@ -127,6 +124,27 @@ export default function AirlineDisplayContainer({ destinations }) {
       ).length,
     );
   }, [destinations.destinations]);
+
+  const updateLocationState = newValue => {
+    setLocationState(newValue); // Update the location state with the new value
+  };
+
+  function handleLocationChange(e) {
+    getFilteredStatesDestinationNumber(e);
+    updateLocationState(e.target.value);
+    setLocationShow(true);
+    setInternationalData(false);
+    setDomesticData(false);
+    setSeasonalData(false);
+    setDestinationErrorMessage("");
+    setSelectChange(false);
+    setDropdownItem(false);
+  }
+
+  function resetDestination() {
+    loadingPromise();
+    setDomesticData(true);
+  }
 
   return (
     <>
@@ -163,6 +181,7 @@ export default function AirlineDisplayContainer({ destinations }) {
               SeasonalData={SeasonalData}
               setDestinationErrorMessage={setDestinationErrorMessage}
               selectValue={selectChange}
+              stateFilterSelect={setDropdownItem}
             />
 
             <div className="d-flex flex-column flex-xl-row flex-sm-column  align-items-xl-center justify-content-xl-end width">
