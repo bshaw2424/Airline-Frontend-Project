@@ -1,15 +1,30 @@
-export default function StateFilter({ state, dropDownName, onChange, value }) {
+import { useState, useEffect } from "react";
+import { getStates } from "../Utilities";
+
+export default function StateFilter({
+  destinations,
+  onChange,
+  dropdownItem,
+  currentSelectValue,
+}) {
+  const [defaultSelectItem, setDefaultSelectItem] = useState("default");
+
+  useEffect(() => {
+    setDefaultSelectItem(dropdownItem ? "default" : currentSelectValue);
+  }, [dropdownItem, currentSelectValue, defaultSelectItem]);
+  console.log(currentSelectValue, defaultSelectItem);
   return (
     <div className="mt-3 mt-lg-0 ms-xl-3">
       <select
         className="form-select"
         aria-label="Destination Location Dropdown Menu"
-        value={value}
         onChange={onChange}
+        defaultValue={defaultSelectItem}
+        key={defaultSelectItem}
       >
-        <option className="selected">{dropDownName}</option>
+        <option value="default">Filter By State / Country</option>
 
-        {state.map((airlineDestinationLocation, i) => (
+        {getStates(destinations).map((airlineDestinationLocation, i) => (
           // take any empty spaces from word then set it to lower case.
           <option
             value={airlineDestinationLocation}
