@@ -10,6 +10,7 @@ import AirlineInformationDisplay from "./AirlineInformationDisplay";
 import NotificationPage from "./NotificationPage";
 import Loader from "./Loader";
 import { DestinationCategorySelect } from "./DestinationCategorySelect";
+import e from "cors";
 // import e from "cors";
 
 export default function AirlineDisplayContainer({ destinations }) {
@@ -30,6 +31,8 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [locationState, setLocationState] = useState("");
   const [locationShow, setLocationShow] = useState(true);
   const [destinationErrorMessage, setDestinationErrorMessage] = useState("");
+  const [currentSelectValue, setCurrentSelectValue] = useState("");
+  const [clickChange, setClickChange] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,7 +88,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   function Domestic(e) {
     setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "false");
-    setLocationState("");
+    setLocationState(e.target.value);
     setDomesticData(true);
     setInternationalData(false);
     setSeasonalData(false);
@@ -94,7 +97,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   function InternationalData(e) {
     setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "true");
-    setLocationState("");
+    setLocationState(e.target.value);
     setDomesticData(false);
     setInternationalData(true);
     setSeasonalData(false);
@@ -104,16 +107,23 @@ export default function AirlineDisplayContainer({ destinations }) {
     setDestinationNumber(filteredLists("seasonal", "false"));
     getTotalFilteredDestinationNumber(e, "seasonal", "true");
     setSeasonalData(true);
-    setLocationState("");
+    setLocationState(e.target.value);
     setDomesticData(false);
     setInternationalData(false);
     setLocationShow(false);
   }
 
+  function setDefaultSetting() {
+    setDomesticData(true);
+    setInternationalData(false);
+    setSeasonalData(false);
+  }
+
   // resets the destination select when the state/country select menu is active
   useEffect(() => {
     !domesticData && setSelectChange(true);
-  }, [domesticData, selectChange, dropdownItem]);
+    // clickChange && setDomesticData(false);
+  }, [domesticData, selectChange, dropdownItem, clickChange]);
 
   // change number of flights total to correspond with associated airline when airline value changed.
   // Defaults to Domestic total
@@ -124,14 +134,10 @@ export default function AirlineDisplayContainer({ destinations }) {
       ).length,
     );
   }, [destinations.destinations]);
-
-  const updateLocationState = newValue => {
-    setLocationState(newValue); // Update the location state with the new value
-  };
-
+  console.log(locationState);
   function handleLocationChange(e) {
     getFilteredStatesDestinationNumber(e);
-    updateLocationState(e.target.value);
+    setLocationState(e.target.value);
     setLocationShow(true);
     setInternationalData(false);
     setDomesticData(false);
@@ -139,11 +145,19 @@ export default function AirlineDisplayContainer({ destinations }) {
     setDestinationErrorMessage("");
     setSelectChange(false);
     setDropdownItem(false);
+    setCurrentSelectValue(e.target.value);
+    setClickChange(false);
   }
 
-  function resetDestination() {
+  function resetDestination(e) {
     loadingPromise();
-    setDomesticData(true);
+    if (e.target.value !== "default") {
+      setDomesticData(true);
+      setLocationState("default");
+    }
+    if (e.target.value === "Southwest Airlines") {
+      e.preventDefault();
+    }
   }
 
   return (
@@ -182,15 +196,20 @@ export default function AirlineDisplayContainer({ destinations }) {
               setDestinationErrorMessage={setDestinationErrorMessage}
               selectValue={selectChange}
               stateFilterSelect={setDropdownItem}
+              setDefaultSetting={setDefaultSetting}
             />
 
             <div className="d-flex flex-column flex-xl-row flex-sm-column  align-items-xl-center justify-content-xl-end width">
-              <AirlineDropdownList getAirlineUrl={resetDestination} />
+              <AirlineDropdownList
+                getAirlineUrl={resetDestination}
+                destinations={destinations}
+              />
 
               <StateFilter
                 onChange={handleLocationChange}
                 destinations={destinations}
                 dropdownItem={dropdownItem}
+                currentSelectValue={currentSelectValue}
               />
             </div>
           </section>
