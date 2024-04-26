@@ -33,6 +33,7 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [destinationErrorMessage, setDestinationErrorMessage] = useState("");
   const [currentSelectValue, setCurrentSelectValue] = useState("");
   const [clickChange, setClickChange] = useState(false);
+  const [airlineName, setAirlineName] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,7 +86,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setNotificationMessage(false);
   }
 
-  function Domestic(e) {
+  const Domestic = e => {
     setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "false");
     setLocationState(e.target.value);
@@ -93,8 +94,9 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(false);
     setSeasonalData(false);
     setLocationShow(false);
-  }
-  function InternationalData(e) {
+  };
+
+  const InternationalData = e => {
     setDestinationNumber(filteredLists("international", "false"));
     getTotalFilteredDestinationNumber(e, "international", "true");
     setLocationState(e.target.value);
@@ -102,8 +104,9 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(true);
     setSeasonalData(false);
     setLocationShow(false);
-  }
-  function SeasonalData(e) {
+  };
+
+  const SeasonalData = e => {
     setDestinationNumber(filteredLists("seasonal", "false"));
     getTotalFilteredDestinationNumber(e, "seasonal", "true");
     setSeasonalData(true);
@@ -111,7 +114,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setDomesticData(false);
     setInternationalData(false);
     setLocationShow(false);
-  }
+  };
 
   function setDefaultSetting() {
     setDomesticData(true);
@@ -134,7 +137,7 @@ export default function AirlineDisplayContainer({ destinations }) {
       ).length,
     );
   }, [destinations.destinations]);
-  console.log(locationState);
+
   function handleLocationChange(e) {
     getFilteredStatesDestinationNumber(e);
     setLocationState(e.target.value);
@@ -151,12 +154,11 @@ export default function AirlineDisplayContainer({ destinations }) {
 
   function resetDestination(e) {
     loadingPromise();
+    setAirlineName(e.target.innerText);
+
     if (e.target.value !== "default") {
       setDomesticData(true);
       setLocationState("default");
-    }
-    if (e.target.value === "Southwest Airlines") {
-      e.preventDefault();
     }
   }
 
