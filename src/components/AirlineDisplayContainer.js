@@ -1,5 +1,6 @@
 // import statements
 import { useEffect, useState } from "react";
+import { useParams, useNavigate, Outlet } from "react-router-dom";
 import AirlineDropdownList from "./AirlineDropdownList";
 import DisplayFilterList from "./DisplayFilterList";
 import { upperCaseFirstLetterOfWord } from "../Utilities";
@@ -11,6 +12,7 @@ import NotificationPage from "./NotificationPage";
 import Loader from "./Loader";
 import { DestinationCategorySelect } from "./DestinationCategorySelect";
 import e from "cors";
+import DomesticSort from "./DomesticSort";
 // import e from "cors";
 
 export default function AirlineDisplayContainer({ destinations }) {
@@ -36,6 +38,9 @@ export default function AirlineDisplayContainer({ destinations }) {
   const [airlineName, setAirlineName] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const { slug } = useParams();
+  const navigate = useNavigate();
 
   // Methods
   function filteredLists(category, stringBoolean) {
@@ -94,6 +99,7 @@ export default function AirlineDisplayContainer({ destinations }) {
     setInternationalData(false);
     setSeasonalData(false);
     setLocationShow(false);
+    navigate(`/airlines/${slug}/destinations/sort/domestic`);
   };
 
   const InternationalData = e => {
