@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import AirlineStateSearch from "./AirlineStateSearch";
 import Airlines from "./Airlines";
@@ -21,7 +21,7 @@ export default function AirlineLanding() {
 
   const [formSearch, setFormSearch] = useState();
 
-  const [isScrolled, setIsStrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState("select_option");
   const [filterIcons, setFilterIcons] = useState();
@@ -32,6 +32,7 @@ export default function AirlineLanding() {
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [error, setError] = useState();
   const [dropDownValue, setDropDownValue] = useState(false);
+  const [links, setLinks] = useState(true);
 
   const getLowerCaseUniqueListOfStateDestination = () => {
     const airline = getAirlineDataFromLoader
@@ -105,8 +106,10 @@ export default function AirlineLanding() {
 
   const airlineSearch = e => {
     e.preventDefault();
-
-    setIsStrolled(true);
+    setIsScrolled(true);
+    if (selectOption === "state") {
+      setLinks(false);
+    }
 
     // Gets the value submitted from the input form
     const inputValueSubmittedFromForm = formValues;
@@ -163,31 +166,25 @@ export default function AirlineLanding() {
       : setFormSearch(false);
   };
 
-  // Displays error message if the input is in the wrong category
-  useEffect(() => {
-    const errorMessageState = setTimeout(() => setFormSearch(false), 5000);
-
-    return () => {
-      clearTimeout(errorMessageState);
-    };
-  }, [formSearch]);
-
   return (
-    <main>
+    <section>
       <Form
         onSubmit={e => airlineSearch(e)}
         handleOptionChange={e => handleOptionChange(e)}
         formChange={e => formChange(e)}
         formValue={formValues}
       />
+      {airportSearch && airportSearchMessage}
+      {error && <Error message={airportCodeErrorMessage} messageDiv={error} />}
+      {links && (
+        <Airlines
+          targetInput={previousFormValue.toUpperCase()}
+          showIconForAirportCode={filterIcons}
+          airportCodeErrorMessage={airportCodeErrorMessage}
+        />
+      )}
 
-      <Airlines
-        targetInput={previousFormValue.toUpperCase()}
-        showIconForAirportCode={filterIcons}
-        airportCodeErrorMessage={airportCodeErrorMessage}
-      />
-
-      <section className="container">
+      <div className="container">
         <AirlineStateSearch
           airlineSearch={getAirlineDataFromLoader}
           targetCategoryValue={upperCaseFirstLetterOfWord(previousFormValue)}
@@ -200,17 +197,12 @@ export default function AirlineLanding() {
           value={dropDownValue}
           closeButton={setMapSearch}
           isScrolled={isScrolled}
+          airlineButtons={setLinks}
         />
 
-        {airportSearch && airportSearchMessage}
-
-        {error && (
-          <Error message={airportCodeErrorMessage} messageDiv={error} />
-        )}
-
         <AirlineDisclaimer />
-      </section>
-    </main>
+      </div>
+    </section>
   );
 }
 
