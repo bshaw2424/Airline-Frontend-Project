@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import AirlineStateSearch from "./AirlineStateSearch";
 import Airlines from "./Airlines";
@@ -27,10 +27,10 @@ export default function AirlineLanding() {
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
   const [airportSearch, setAirportSearch] = useState(null);
-  const [mapSearch, setMapSearch] = useState(false);
+  const [mapSearch, setMapSearch] = useState(null);
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
   const [dropDownValue, setDropDownValue] = useState(false);
   const [links, setLinks] = useState(true);
 
@@ -54,6 +54,17 @@ export default function AirlineLanding() {
     // Use a regular expression to match only alphabetic characters
     return inputString.replace(/[^a-zA-Z\s]/g, "");
   }
+
+  const getList = getAirlineDataFromLoader
+    .map(getDestination => ({
+      codes: getDestination.destinations
+        .filter(
+          location =>
+            location.state === upperCaseFirstLetterOfWord(previousFormValue),
+        )
+        .map(location => location.airport_code),
+    }))
+    .filter(arrayList => arrayList.codes.length !== 0).length;
 
   const objectOfAirlineLengthAndAirportName = () => {
     return {
@@ -85,6 +96,26 @@ export default function AirlineLanding() {
     errorMessage = "State or International Destination";
   }
 
+  useEffect(() => {
+    if (selectOption === "state" && getList !== 0) {
+      setMapSearch(true);
+      setLinks(false);
+      setAirportCodeErrorMessage("");
+    }
+
+    if (selectOption === "state" && getList === 0) {
+      setLinks(true);
+    }
+
+    if (selectOption === "airport_code") {
+      setMapSearch(false);
+    }
+
+    if (selectOption === "default" || selectOption === "airport_code") {
+      setLinks(true);
+    }
+  }, [getList, selectOption]);
+
   function formChange(e) {
     setFormValues(removeNonAlphabetic(e.target.value));
   }
@@ -106,10 +137,6 @@ export default function AirlineLanding() {
 
   const airlineSearch = e => {
     e.preventDefault();
-    setIsScrolled(true);
-    if (selectOption === "state") {
-      setLinks(false);
-    }
 
     // Gets the value submitted from the input form
     const inputValueSubmittedFromForm = formValues;
@@ -118,7 +145,7 @@ export default function AirlineLanding() {
 
     setFilterIcons(selectOption);
 
-    if (selectOption === "airport_code") {
+    if (selectOption === "airport_code" && airlineAirportLength !== 0) {
       setAirportSearch(true);
       setError(false);
       setMapSearch(false);
@@ -130,29 +157,19 @@ export default function AirlineLanding() {
           airportName={airportName}
         />,
       );
-    }
-
-    if (selectOption === "state") {
-      setMapSearch(true);
-      setAirportSearch(false);
-      setError(false);
+    } else {
+      setError(true);
+      setAirportSearchMessage("");
     }
 
     setAirportCodeErrorMessage(
       <>
         <span style={{ textDecoration: "underline" }}>
           {formValues.toUpperCase()}
-        </span>{" "}
+        </span>
         is not a valid {errorMessage}
       </>,
     );
-
-    if (airlineAirportLength === 0 && selectOption === "airport_code") {
-      setError(true);
-      setAirportSearch(false);
-    } else {
-      setError(false);
-    }
 
     setFormValues("");
     setDropDownValue(true);
@@ -183,7 +200,6 @@ export default function AirlineLanding() {
           airportCodeErrorMessage={airportCodeErrorMessage}
         />
       )}
-
       <div className="container">
         <AirlineStateSearch
           airlineSearch={getAirlineDataFromLoader}
