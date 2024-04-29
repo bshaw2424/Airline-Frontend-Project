@@ -164,10 +164,8 @@ export default function AirlineLanding() {
 
     setAirportCodeErrorMessage(
       <>
-        <span style={{ textDecoration: "underline" }}>
-          {formValues.toUpperCase()}
-        </span>
-        is not a valid {errorMessage}
+        {`${formValues.toUpperCase()} 
+        is not a valid ${errorMessage}`}
       </>,
     );
 
@@ -184,12 +182,21 @@ export default function AirlineLanding() {
   };
 
   return (
-    <section>
+    <section
+      style={{
+        backgroundImage: "url(../airlineBackground.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "auto",
+        backgroundPosition: "center",
+        zIndex: -1,
+      }}
+    >
       <Form
         onSubmit={e => airlineSearch(e)}
         handleOptionChange={e => handleOptionChange(e)}
         formChange={e => formChange(e)}
         formValue={formValues}
+        selectOption={selectOption}
       />
       {airportSearch && airportSearchMessage}
       {error && <Error message={airportCodeErrorMessage} messageDiv={error} />}
