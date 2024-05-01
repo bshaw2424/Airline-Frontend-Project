@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
 import StateList from "./StateList";
 import DisplayAirportCodeTitle from "./DisplayAirportCodeTitle";
-import Error from "./Error";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AirlineStateSearch({
@@ -11,22 +9,22 @@ export default function AirlineStateSearch({
   selectOptionValue,
   airportName,
   mapSearch,
-  message,
-  messageDiv,
   closeButton,
   isScrolled,
+  airlineButtons,
+  setIsScrolled,
 }) {
-  useEffect(() => {
-    if (isScrolled) {
-      const element = document.getElementById("stateDestinationMap");
+  // useEffect(() => {
+  //   if (isScrolled) {
+  //     const element = document.querySelector("#stateDestinationMap");
 
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [isScrolled, targetCategoryValue]);
+  //     if (element) {
+  //       element.scrollIntoView({
+  //         behavior: "smooth",
+  //       });
+  //     }
+  //   }
+  // }, [isScrolled, targetCategoryValue]);
 
   const getListOfDestinations = () => {
     const getList = airlineSearch.map(getDestination => ({
@@ -40,19 +38,10 @@ export default function AirlineStateSearch({
   };
 
   const lengthOfDestinations = getListOfDestinations();
-  const mapShowStyles = {
-    padding: "7rem 0",
-    margin: "3rem 0",
-  };
-
-  const mapRemoveStyles = {
-    padding: "0rem",
-    margin: "0rem",
-    // paddingRight: "0rem",
-  };
 
   function closeMap() {
     closeButton(false);
+    airlineButtons(true);
   }
 
   return (
@@ -60,58 +49,54 @@ export default function AirlineStateSearch({
       id="stateDestinationMap"
       className={
         mapSearch && lengthOfDestinations !== 0
-          ? "border border-2 rounded pe-sm-0 pe-lg-4"
+          ? "shadow rounded bg-white pe-sm-0 p-lg-4 mb-5 mt-3"
           : ""
       }
       style={{
         position: "relative",
-        ...(mapSearch && lengthOfDestinations !== 0
-          ? mapShowStyles
-          : mapRemoveStyles),
       }}
     >
       <div className="container">
         {mapSearch && lengthOfDestinations !== 0 ? (
-          <span
-            className="bg-light p-2 rounded-circle border border-1 border-dark"
-            style={{ position: "absolute", top: 360, right: -23, zIndex: 2 }}
-          >
-            <button
-              type="button"
-              className="btn-close btn-close-dark"
-              aria-label="Close"
-              onClick={closeMap}
-            ></button>
-          </span>
+          <button
+            type="button"
+            style={{
+              position: "absolute",
+              top: -25,
+              right: -25,
+            }}
+            className="btn-close btn-close-primary p-3 bg-white border boreder-1 border-dark rounded-circle"
+            aria-label="Close"
+            onClick={closeMap}
+          ></button>
         ) : (
           ""
         )}
+
         <AnimatePresence initial={false}>
           {mapSearch && lengthOfDestinations !== 0 && (
             <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.5 } }}
+              className="mb-5"
             >
-              <StateList
-                dataList={airlineSearch}
-                searchValue={targetCategoryValue}
-                objectState={getListOfDestinations()}
-                internationalSearchValue={internationalSearchValue}
-              />
               <DisplayAirportCodeTitle
                 selectOption={selectOptionValue}
                 airlineAirportLength={lengthOfDestinations}
                 airportFormValue={targetCategoryValue}
                 airportName={airportName}
               />
-            </motion.section>
-          )}{" "}
-        </AnimatePresence>
 
-        {mapSearch && lengthOfDestinations === 0 && (
-          <Error message={message} messageDiv={messageDiv} />
-        )}
+              <StateList
+                dataList={airlineSearch}
+                searchValue={targetCategoryValue}
+                objectState={getListOfDestinations()}
+                internationalSearchValue={internationalSearchValue}
+              />
+            </motion.section>
+          )}
+        </AnimatePresence>
       </div>
     </article>
   );
