@@ -14,6 +14,19 @@ export default function StateList({
   objectState,
   internationalSearchValue,
 }) {
+  const getAirportCodes = dataList.map(a =>
+    a.destinations
+      .filter(item => item.state === searchValue)
+      .map(
+        item =>
+          item.length !== 0 && {
+            airport: item.airport_name,
+            code: item.airport_code,
+          },
+      ),
+  );
+  const filteredCodes = getAirportCodes.filter(item => item.length !== 0);
+
   const getListOfAirlinesObject = () =>
     dataList
       .map(state => ({
@@ -27,11 +40,12 @@ export default function StateList({
                 internationalSearchValue === "false"
                   ? changeAirportCodeToIcaoCode(items.airport_code)
                   : items.airport_code,
-              // get name of airport
-              airport: items.airport_name,
+              // // get name of airport
+              // airport: items.airport_name,
             });
             return createObjectOfAirportCodeAndName;
           }, []),
+        airport_details: filteredCodes,
         length: state.destinations
           .filter(
             location =>
@@ -66,7 +80,10 @@ export default function StateList({
       ),
       [airlineName]: true,
     }));
-    setAirlineIndex(getCoordinatesAndTitleToAddToMap(airlineName));
+    // Check if airlineNameList is defined before calling findIndex
+    if (airlineNameList) {
+      setAirlineIndex(getCoordinatesAndTitleToAddToMap(airlineName));
+    }
   };
 
   const getCoordinatesAndTitleToAddToMap = airlineName =>
@@ -103,33 +120,38 @@ export default function StateList({
             },
           ),
         );
-
+        console.log(dataResultsObjectWithNameAndCoordinates);
         // puts the lat and lng coordinates in a object
-        const compareListToFindMatchingCodes = airlineObjectData.map(airline =>
-          airline.codes.map(matchingName => {
-            const findMatchingName =
-              dataResultsObjectWithNameAndCoordinates.find(
+        const compareListToFindMatchingCodes = airlineObjectData.map(
+          (airline, j) => {
+            const destinationCoordinates = airline.codes.map(matchingName => {
+              return dataResultsObjectWithNameAndCoordinates.find(
                 object => object.name === matchingName.code,
               );
-            return findMatchingName
-              ? {
-                  location: {
-                    ...findMatchingName?.coordinates,
-                    title: matchingName?.airport,
-                  },
-                }
-              : matchingName;
-          }),
-        );
+            });
 
+            const airportMarkerDetails = airline.airport_details.map(a => {
+              let obj = {};
+              for (let i = 0; i < a.length; i++) {
+                obj["coordinates"] = destinationCoordinates[i];
+                obj["airport"] = a[i].airport;
+                obj["code"] = a[i].code;
+              }
+
+              return obj;
+            });
+            return { ...destinationCoordinates, ...airportMarkerDetails };
+          },
+        );
+        console.log(compareListToFindMatchingCodes);
         const getArrayListOfAirlineNames = airlineObjectData.map(a => a.name);
+
         setAirlineNameList(getArrayListOfAirlineNames);
         setCoords(compareListToFindMatchingCodes);
       } catch (error) {
         console.log("there was a error " + error);
       }
     };
-
     getCoordinates();
   }, [dataList, searchValue, airlineObjectData, internationalSearchValue]);
 
