@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Marker, InfoWindow } from "@react-google-maps/api";
+import { getIataCodeFromIcaoCode } from "../Utilities";
 
 export default function DisplayMarkers({ coords, airlineIndex }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -31,33 +32,50 @@ export default function DisplayMarkers({ coords, airlineIndex }) {
       setSelectedMarker(null);
     }
   };
-
+  console.log(airlineIndex);
   return (
     <>
       {coords &&
         coords[airlineIndex] &&
-        coords[airlineIndex].map((coordinates, index) => {
-          const {
-            location: { lat, lng, title },
-          } = coordinates;
+        coords[airlineIndex].map((airlineDetails, index) => {
+          const { name, lat, lng, airport } = airlineDetails;
+
           return (
             <Marker
-              key={`${title}-${index}`}
-              position={{ lat: +lat, lng: +lng }}
-              onMouseOver={() => handleMarkerHover(coordinates)}
-              onMouseOut={handleCloseInfoWindow}
-              onClick={() => handleMarkerClick(title)}
+              key={`${airport}-${index}`}
+              position={{
+                lat: +lat,
+                lng: +lng,
+              }}
+              onMouseOver={() => handleMarkerHover(airlineDetails)}
+              // onMouseOut={handleCloseInfoWindow}
             >
-              {selectedMarker === coordinates && (
+              {!isInfoWindowHovered && selectedMarker === airlineDetails && (
                 <InfoWindow
                   onCloseClick={handleCloseInfoWindow}
                   onMouseOver={handleInfoWindowHover}
                   onMouseOut={handleInfoWindowExit}
+                  style={{ background: "tan", height: "40rem", width: "60rem" }}
                 >
-                  <div>
-                    <h5 className="text-center">{title}</h5>
-                    <p>Click marker to view more details</p>
-                  </div>
+                  <>
+                    <h4 className="text-center">{airport}</h4>
+                    <p
+                      className="text-center bg-primary py-2 text-white"
+                      style={{ fontSize: "1.3rem" }}
+                    >
+                      <b>( {getIataCodeFromIcaoCode(name)} )</b>
+                    </p>
+                    <p
+                      className="text-center mt-0 pt-0"
+                      style={{
+                        fontSize: "1rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleMarkerClick(airport)}
+                    >
+                      Click marker to view more details
+                    </p>
+                  </>
                 </InfoWindow>
               )}
             </Marker>
