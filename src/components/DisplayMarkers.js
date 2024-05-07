@@ -4,7 +4,6 @@ import { getIataCodeFromIcaoCode } from "../Utilities";
 
 export default function DisplayMarkers({ coords, airlineIndex }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [isInfoWindowHovered, setIsInfoWindowHovered] = useState(false);
 
   const handleMarkerClick = title => {
     window.open(
@@ -14,25 +13,23 @@ export default function DisplayMarkers({ coords, airlineIndex }) {
       "_blank",
     );
   };
+  // const handleMarkerHover = marker => {
+  //   setSelectedMarker(marker);
+  // };
 
-  const handleMarkerHover = marker => {
-    setSelectedMarker(marker);
-  };
+  // const handleInfoWindowHover = () => {
+  //   setIsInfoWindowHovered(true);
+  //   setIsInfoWindowHovered(false);
+  // };
 
-  const handleInfoWindowHover = () => {
-    setIsInfoWindowHovered(true);
-  };
+  // const handleInfoWindowExit = () => {
+  //   setIsInfoWindowHovered(true);
+  // };
 
-  const handleInfoWindowExit = () => {
-    setIsInfoWindowHovered(false);
-  };
+  // const handleCloseInfoWindow = marker => {
+  //   setSelectedMarker(marker);
+  // };
 
-  const handleCloseInfoWindow = () => {
-    if (!isInfoWindowHovered) {
-      setSelectedMarker(null);
-    }
-  };
-  console.log(airlineIndex);
   return (
     <>
       {coords &&
@@ -47,34 +44,27 @@ export default function DisplayMarkers({ coords, airlineIndex }) {
                 lat: +lat,
                 lng: +lng,
               }}
-              onMouseOver={() => handleMarkerHover(airlineDetails)}
-              // onMouseOut={handleCloseInfoWindow}
+              onMouseOver={() => setSelectedMarker(airlineDetails)}
+              onMouseOut={() => setSelectedMarker(null)}
+              onClick={() => handleMarkerClick(airport)}
             >
-              {!isInfoWindowHovered && selectedMarker === airlineDetails && (
-                <InfoWindow
-                  onCloseClick={handleCloseInfoWindow}
-                  onMouseOver={handleInfoWindowHover}
-                  onMouseOut={handleInfoWindowExit}
-                  style={{ background: "tan", height: "40rem", width: "60rem" }}
-                >
+              {selectedMarker === airlineDetails && (
+                <InfoWindow>
                   <>
-                    <h4 className="text-center">{airport}</h4>
-                    <p
-                      className="text-center bg-primary py-2 text-white"
-                      style={{ fontSize: "1.3rem" }}
-                    >
-                      <b>( {getIataCodeFromIcaoCode(name)} )</b>
-                    </p>
-                    <p
-                      className="text-center mt-0 pt-0"
+                    <h3
+                      className="text-center p-3 border border-1 border-dark shadow rounded"
                       style={{
-                        fontSize: "1rem",
-                        cursor: "pointer",
+                        fontSize: "1.3rem",
+                        // backgroundColor: "#333",
+                        color: "#333",
                       }}
-                      onClick={() => handleMarkerClick(airport)}
                     >
-                      Click marker to view more details
-                    </p>
+                      {airport} -{" "}
+                      <span style={{ fontWeight: "400" }}>
+                        ( {getIataCodeFromIcaoCode(name)} )
+                      </span>
+                    </h3>
+                    <h6 className="text-center">Click marker for details</h6>
                   </>
                 </InfoWindow>
               )}
