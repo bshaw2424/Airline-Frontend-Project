@@ -276,6 +276,87 @@ const getDomesticIcaoCodes = getIcaoCodeFromIataCode => {
   }
 };
 
+export const getIataCodeFromIcaoCode = getIcaoCodeFromIataCode => {
+  // If input is already 3 letters, return it as is
+  if (getIcaoCodeFromIataCode.length === 3) {
+    return getIcaoCodeFromIataCode;
+  }
+  switch (getIcaoCodeFromIataCode) {
+    case "PHNL":
+      return "HNL";
+    case "PHOG":
+      return "OGG";
+    case "PHKO":
+      return "KOA";
+    case "PHTO":
+      return "ITO";
+    case "PHLI":
+      return "LIH";
+    case "PANC":
+      return "ANC";
+    case "PAFA":
+      return "FAI";
+    case "PADK":
+      return "ADK";
+    case "PABE":
+      return "BET";
+    case "PACD":
+      return "CDB";
+    case "PACV":
+      return "CDV";
+    case "PASC":
+      return "SCC";
+    case "PADL":
+      return "DLG";
+    case "PADU":
+      return "DUT";
+    case "PAGS":
+      return "GST";
+    case "PAJN":
+      return "JNU";
+    case "PAKT":
+      return "KTN";
+    case "PAKN":
+      return "AKN";
+    case "PADQ":
+      return "ADQ";
+    case "PAOT":
+      return "OTZ";
+    case "PAOM":
+      return "OME";
+    case "PAPG":
+      return "PSG";
+    case "PASI":
+      return "SIT";
+    case "PABR":
+      return "BRW";
+    case "PAWG":
+      return "WRG";
+    case "PAYA":
+      return "YAK";
+    case "KIWA":
+      return "AZA";
+    case "KNYL":
+      return "YUM";
+    case "TJBQ":
+      return "BQN";
+    case "TJSJ":
+      return "SJU";
+    case "TJPS":
+      return "PSE";
+    case "KBBG":
+      return "BKG";
+    case "KGPI":
+      return "FCA";
+    case "KJQF":
+      return "USA";
+    case "NSTU":
+      return "PPG";
+    default:
+      return getIcaoCodeFromIataCode.substring(1);
+  }
+};
+
 export const changeAirportCodeToIcaoCode = destinationAirportCode => {
   return getDomesticIcaoCodes(destinationAirportCode);
 };
