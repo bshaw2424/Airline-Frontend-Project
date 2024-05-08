@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
+import Footer from "./Footer";
 
 export default function NavRoot() {
   return (
@@ -7,8 +8,9 @@ export default function NavRoot() {
         style={{
           display: "flex",
           justifyContent: "space-between",
+          flexDirection: "column",
           alignItems: "center",
-          background: "hsl(51, 0%, 0%)",
+          backgroundColor: "#333",
           color: "#fff",
         }}
       >
@@ -19,7 +21,7 @@ export default function NavRoot() {
             </Link>
           </h1>
           <div className="d-flex">
-            <NavLink style={{ color: "#fff" }} Link to="/" className="mx-2">
+            <NavLink style={{ color: "#fff" }} to="/" className="mx-2">
               Home
             </NavLink>
 
@@ -29,7 +31,10 @@ export default function NavRoot() {
           </div>
         </nav>
       </div>
+
       <Outlet />
+
+      <Footer />
     </header>
   );
 }
