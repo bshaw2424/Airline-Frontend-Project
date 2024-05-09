@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import FeaturedAirlines from "./FeaturedAirlines";
+import AirlineFeatureDescription from "./AirlineFeatureDescription";
 
 export default function Home() {
   return (
@@ -18,41 +20,37 @@ export default function Home() {
             justifyContent: "space-evenly",
             alignItems: "center",
             flexDirection: "row",
-            borderTop: "2px solid green",
             marginTop: "0",
           }}
-          className="border-top border-bottom border-top-1 border-bottom-1 border-light"
         >
           <div
             style={{
               display: "flex",
+              backgroundColor: "rgba(255,255,255, 0.6)",
+              right: 150,
               alignItems: "center",
-              justifyItems: "center",
+              justifyContent: "center",
               flexDirection: "column",
-              justifyContent: "end",
-              width: "100%",
-              height: "75%",
+              width: "35%",
+              height: "50%",
+              position: "absolute",
+              zIndex: 1,
+              outline: "1px solid #333",
+              borderRadius: "1.8rem",
             }}
-            className="container"
+            className="container shadow-sm"
           >
             <h2
-              style={{ fontSize: "3rem", width: "90%" }}
-              className="pb-2 border-bottom border-bottom-1 border-dark  text-center py-2"
+              style={{ fontSize: "3rem", borderBottom: "1px solid #333" }}
+              className="pb-2  text-center py-2"
             >
-              Let The Journey Begin
+              Next Travel Destination
             </h2>
-            <div
-              style={{
-                height: "75%",
-                paddingLeft: "3rem",
-              }}
-              className="container pt-2"
-            >
-              <p style={{ fontSize: "1.2rem" }} className="">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed,
-                ipsa libero! Sapiente commodi distinctio fugit a exercitationem
-                dolorem reprehenderit beatae similique veritatis quisquam
-                excepturi eveniet numquam aspernatur, qui quod possimus.
+            <div className="container">
+              <p style={{ fontSize: "1.2rem" }}>
+                Discover different destinations from your favorite airport and
+                which airports they fly to. The curiousity for your next travel
+                spot starts now.
               </p>
               <div className="d-flex justify-content-end my-3">
                 <Link
@@ -67,17 +65,18 @@ export default function Home() {
           </div>
           <div
             style={{
-              height: "76%",
-              width: "100%",
+              height: "100%",
+              width: "100vw",
               objectFit: "contain",
+              position: "relative",
             }}
-            className="container d-flex justify-content-start align-items-center "
+            className=" d-flex justify-content-start align-items-center "
           >
             <img
               style={{
                 objectFit: "contain",
                 height: "100%",
-                Width: "90%",
+                Width: "100%",
               }}
               className="rounded"
               src="airport.jpg"
@@ -86,12 +85,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div
-        style={{ height: "100vh" }}
-        className="border border-top border-top-1 border-top-dark"
-      >
-        <p>Hello World Second Section</p>
-      </div>
+      <FeaturedAirlines />
+      <AirlineFeatureDescription />
     </main>
   );
 }
