@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import AirlineStateSearch from "./AirlineStateSearch";
 import Airlines from "./Airlines";
 
@@ -21,13 +22,12 @@ export default function AirlineLanding() {
 
   const [formSearch, setFormSearch] = useState();
 
-  const [isScrolled, setIsScrolled] = useState(false);
   const [formValues, setFormValues] = useState("");
   const [selectOption, setSelectOption] = useState("select_option");
   const [filterIcons, setFilterIcons] = useState();
   const [previousFormValue, setPreviousFormValue] = useState("");
-  const [airportSearch, setAirportSearch] = useState(null);
-  const [mapSearch, setMapSearch] = useState(null);
+  const [airportSearch, setAirportSearch] = useState();
+  const [mapSearch, setMapSearch] = useState();
   const [airportSearchMessage, setAirportSearchMessage] = useState("");
   const [airportCodeErrorMessage, setAirportCodeErrorMessage] = useState("");
   const [error, setError] = useState(false);
@@ -55,7 +55,7 @@ export default function AirlineLanding() {
     return inputString.replace(/[^a-zA-Z\s]/g, "");
   }
 
-  const getList = getAirlineDataFromLoader
+  let getList = getAirlineDataFromLoader
     .map(getDestination => ({
       codes: getDestination.destinations
         .filter(
@@ -105,16 +105,17 @@ export default function AirlineLanding() {
 
     if (selectOption === "state" && getList === 0) {
       setLinks(true);
+      setMapSearch(false);
     }
 
-    if (selectOption === "airport_code") {
-      setMapSearch(false);
+    if (selectOption === "state") {
+      setAirportSearch(false);
     }
 
     if (selectOption === "default" || selectOption === "airport_code") {
       setLinks(true);
     }
-  }, [getList, selectOption]);
+  }, [getList, selectOption, previousFormValue]);
 
   function formChange(e) {
     setFormValues(removeNonAlphabetic(e.target.value));
@@ -128,10 +129,13 @@ export default function AirlineLanding() {
       setError(false);
       setAirportSearch(false);
       setFilterIcons("");
+      setAirportSearchMessage("");
     }
     if (e.target.value === "airport_code") {
       setError(false);
+      setAirportSearch(true);
       setMapSearch(false);
+      setPreviousFormValue("");
     }
   }
 
@@ -164,13 +168,20 @@ export default function AirlineLanding() {
 
     setAirportCodeErrorMessage(
       <>
-        {`${formValues.toUpperCase()} 
+        {`${formValues.toUpperCase()}
         is not a valid ${errorMessage}`}
       </>,
     );
 
     setFormValues("");
     setDropDownValue(true);
+
+    if (
+      selectOption === "state" &&
+      inputValueSubmittedFromForm === previousFormValue
+    ) {
+      setError(false);
+    }
 
     !displayMessageIfSearchInputNotFound(
       getAirlineDataFromLoader,
@@ -200,13 +211,22 @@ export default function AirlineLanding() {
       />
       {airportSearch && airportSearchMessage}
       {error && <Error message={airportCodeErrorMessage} messageDiv={error} />}
-      {links && (
-        <Airlines
-          targetInput={previousFormValue.toUpperCase()}
-          showIconForAirportCode={filterIcons}
-          airportCodeErrorMessage={airportCodeErrorMessage}
-        />
-      )}
+      <AnimatePresence>
+        {links && (
+          <motion.section
+            className="my-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: links ? 1 : 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Airlines
+              targetInput={previousFormValue.toUpperCase()}
+              showIconForAirportCode={filterIcons}
+              airportCodeErrorMessage={airportCodeErrorMessage}
+            />
+          </motion.section>
+        )}
+      </AnimatePresence>
       <div className="container">
         <AirlineStateSearch
           airlineSearch={getAirlineDataFromLoader}
@@ -215,11 +235,8 @@ export default function AirlineLanding() {
           selectOptionValue={selectOption}
           airportName={airportName}
           mapSearch={mapSearch}
-          message={airportCodeErrorMessage}
-          messageDiv={mapSearch}
           value={dropDownValue}
           closeButton={setMapSearch}
-          isScrolled={isScrolled}
           airlineButtons={setLinks}
         />
 
