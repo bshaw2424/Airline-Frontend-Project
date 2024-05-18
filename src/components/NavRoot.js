@@ -4,33 +4,49 @@ import Footer from "./Footer";
 export default function NavRoot() {
   return (
     <header>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: "#333",
-          color: "#fff",
-        }}
-      >
-        <nav className="container d-flex justify-content-between align-items-center py-2">
-          <h1>
-            <Link to="/" className="navbar-brand">
-              Flight In Range
-            </Link>
-          </h1>
+      <nav className="container navbar navbar-expand-lg  py-2">
+        <div className="container-fluid">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
           <div className="d-flex">
-            <NavLink style={{ color: "#fff" }} to="/" className="mx-2">
-              Home
-            </NavLink>
+            <h1>
+              <Link to="/">Flight In Range</Link>
+            </h1>
 
-            <NavLink style={{ color: "#fff" }} to="/airlines">
-              Airlines
-            </NavLink>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav">
+                <li className="nav-item">
+                  <NavLink
+                    style={{ color: "#333" }}
+                    to="/"
+                    className="mx-2 nav-link"
+                  >
+                    Home
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    style={{ color: "#333" }}
+                    to="/airlines"
+                    className="nav-link"
+                  >
+                    Airlines
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
           </div>
-        </nav>
-      </div>
+        </div>
+      </nav>
 
       <Outlet />
 
