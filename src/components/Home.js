@@ -1,35 +1,18 @@
 import FeaturedAirlines from "./FeaturedAirlines";
+
 import AirlineFeatureDescription from "./AirlineFeatureDescription";
-import HomeDescription from "./HomeDescription";
-import HomeImage from "./HomeImage";
+
 import { useLoaderData } from "react-router-dom";
 import axios from "axios";
+import HeroImage from "./HeroImage";
 
 export default function Home() {
   const getAirlineNames = useLoaderData();
+
   return (
     <main>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
-      >
-        <div
-          style={{
-            height: "90vh",
-            display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            flexDirection: "row",
-            marginTop: "0",
-          }}
-        >
-          <HomeImage />
-          <HomeDescription />
-        </div>
+      <div id="hero" style={{ height: "100%", width: "100%" }} className="mb-5">
+        <HeroImage />
       </div>
       <FeaturedAirlines airlineNames={getAirlineNames} />
       <AirlineFeatureDescription />
