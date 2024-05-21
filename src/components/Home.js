@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <main>
-      <div id="hero" style={{ height: "100%", width: "100%" }} className="mb-5">
+      <div id="hero" style={{ height: "100%", width: "100%" }}>
         <HeroImage />
       </div>
       <FeaturedAirlines airlineNames={getAirlineNames} />
