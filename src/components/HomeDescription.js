@@ -1,41 +1,36 @@
 import { Link } from "react-router-dom";
 import { SlLocationPin } from "react-icons/sl";
-// import { MdLocationOn } from "react-icons/md";
 const HomeDescription = () => {
   return (
     <section
       style={{
         height: "100vh",
       }}
-      className="d-flex justify-content-center align-items-center"
+      id="home-description-container"
+      className="container d-flex justify-content-center align-items-center"
     >
-      <div className="border border-1 border-dark p-5 rounded-4">
+      <div>
         <p
           style={{
             fontSize: "3rem",
-            borderBottom: "1px solid #333",
-            lineHeight: "2.5rem",
             color: "#333",
             textTransform: "capitalize",
           }}
-          className="d-flex justify-content-center align-items-center pb-3"
+          className="d-flex justify-content-center align-items-center"
         >
-          <span className="me-3">
+          <span className="me-3 hero-icon">
             <SlLocationPin />
-            {/* <MdLocationOn /> */}
           </span>
           Finding your next favorite travel destination awaits.
         </p>
-        <Link
-          style={{
-            width: "25%",
-            boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.5)",
-          }}
-          className="btn btn-primary text-white mt-3"
-          to="/airlines"
-        >
-          View Airlines
-        </Link>
+        <div className=" mt-5 w-100 home-description-button-container">
+          <Link
+            className="btn btn-outline-dark mt-1 rounded-2 hero-btn"
+            to="/airlines"
+          >
+            View Airlines
+          </Link>
+        </div>
       </div>
     </section>
   );
