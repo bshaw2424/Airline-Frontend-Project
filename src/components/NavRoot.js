@@ -4,50 +4,45 @@ import Footer from "./Footer";
 export default function NavRoot() {
   return (
     <header>
-      <nav className="container navbar navbar-expand-lg  py-2">
-        <div className="container-fluid">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="d-flex">
+      <div className="shadow-sm p-0 m-0">
+        <nav className="container navbar navbar-expand-lg py-2">
+          <div className="container-fluid">
             <h1>
               <Link to="/">Flight In Range</Link>
             </h1>
-
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <NavLink
-                    style={{ color: "#333" }}
-                    to="/"
-                    className="mx-2 nav-link"
-                  >
-                    Home
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    style={{ color: "#333" }}
-                    to="/airlines"
-                    className="nav-link"
-                  >
-                    Airlines
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
           </div>
-        </div>
-      </nav>
-
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ps-3">
+              <li className="nav-item">
+                <NavLink style={{ color: "#333" }} to="/" className="nav-link">
+                  Home
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  style={{ color: "#333" }}
+                  to="/airlines"
+                  className="nav-link"
+                >
+                  Airlines
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        {/* <div className="d-flex"></div> */}
+      </div>
       <Outlet />
 
       <Footer />
