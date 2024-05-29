@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import { SlLocationPin } from "react-icons/sl";
+import { ThreeDots } from "react-loader-spinner";
+import { useState } from "react";
 
 const HomeDescription = () => {
+  const [sending, isSending] = useState(false);
+
+  const buttonClick = () => {
+    isSending(true);
+  };
+  console.log(sending);
   return (
     <section
       style={{
@@ -33,10 +41,24 @@ const HomeDescription = () => {
             Finding your next favorite travel destination awaits.
             <span className=" w-100 home-description-button-container">
               <Link
-                className="btn btn-outline-dark mt-1 rounded-2 hero-btn"
+                className="btn btn-outline-dark mt-1 rounded-2 hero-btn d-flex justify-content-center align-items-center"
                 to="/airlines"
+                onClick={() => buttonClick()}
               >
-                View Airlines
+                {sending ? (
+                  <ThreeDots
+                    visible={true}
+                    height="35"
+                    width="35"
+                    color="#fff"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  "View Airlines"
+                )}
               </Link>
             </span>
           </p>
@@ -45,15 +67,14 @@ const HomeDescription = () => {
             style={{
               width: "100%",
               height: "100%",
-              flex: 5.5,
-
-              alignSelf: "flex-end",
+              flex: 4,
+              padding: 0,
             }}
           >
             <img
               src="../airport.jpg"
               alt=""
-              style={{ objectFit: "contain", height: "100%", width: "100%" }}
+              style={{ objectFit: "cover", height: "100%", width: "100%" }}
             />
           </div>
         </div>
