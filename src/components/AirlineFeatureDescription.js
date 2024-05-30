@@ -4,13 +4,15 @@ import AirlineFeature from "./AirlineFeature";
 
 const AirlineFeatureDescription = () => {
   return (
-    <section className="w-100 py-3 my-5" id="feature-description">
-      <div className="d-flex justify-content-evenly container">
+    <section
+      className="w-100"
+      id="feature-description"
+      style={{ background: "#f4f4f4" }}
+    >
+      <div className="d-flex justify-content-evenly container py-5">
         <AirlineFeature
           icons={<CiSearch fontSize="2rem" />}
-          description={
-            "Discover domestic, international, and seasonal destinations"
-          }
+          description="Search domestic, international, and seasonal destinations"
           isLast={false}
         />
         <AirlineFeature
@@ -20,7 +22,7 @@ const AirlineFeatureDescription = () => {
         />
         <AirlineFeature
           icons={<CiLocationOn fontSize="2rem" />}
-          description="Search by airport code or state / country"
+          description="Search by airport code or state / country *state search relative to United States*"
           isLast={true}
         />
       </div>
