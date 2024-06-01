@@ -1,11 +1,14 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "./Static/Footer";
+import { useState } from "react";
 
 export default function NavRoot() {
+  const [activeNav, setActiveNav] = useState("");
+
   return (
     <header>
-      <div className="shadow-sm p-0 m-0">
-        <nav className="container navbar navbar-expand-lg py-2">
+      <div className="p-0 m-0 shadow-sm">
+        <nav className="container navbar navbar-expand-lg py-2 ">
           <div className="container-fluid">
             <h1>
               <Link to="/">Flight In Range</Link>
@@ -25,26 +28,41 @@ export default function NavRoot() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ps-3">
               <li className="nav-item">
-                <NavLink style={{ color: "#333" }} to="/" className="nav-link">
+                <NavLink
+                  to="/"
+                  className={`nav-link ${activeNav === "/" ? "active" : ""}`}
+                  onClick={() => setActiveNav("/")}
+                >
                   Home
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink
-                  style={{ color: "#333" }}
                   to="/airlines"
-                  className="nav-link"
+                  className={`nav-link ${
+                    activeNav === "/airlines" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveNav("/airlines")}
                 >
                   Airlines
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/about"
+                  className={`nav-link ${
+                    activeNav === "/about" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveNav("/about")}
+                >
+                  About
                 </NavLink>
               </li>
             </ul>
           </div>
         </nav>
-        {/* <div className="d-flex"></div> */}
       </div>
       <Outlet />
-
       <Footer />
     </header>
   );
