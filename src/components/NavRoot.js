@@ -1,10 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import Footer from "./Static/Footer";
-import { useState } from "react";
 
 export default function NavRoot() {
-  const [activeNav, setActiveNav] = useState("");
-
   return (
     <header>
       <div className="p-0 m-0 shadow-sm">
@@ -28,33 +25,17 @@ export default function NavRoot() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ps-3">
               <li className="nav-item">
-                <NavLink
-                  to="/"
-                  className={`nav-link ${activeNav === "/" ? "active" : ""}`}
-                  onClick={() => setActiveNav("/")}
-                >
+                <NavLink to="/" className="nav-link">
                   Home
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/airlines"
-                  className={`nav-link ${
-                    activeNav === "/airlines" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveNav("/airlines")}
-                >
+                <NavLink to="/airlines" className="nav-link">
                   Airlines
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/about"
-                  className={`nav-link ${
-                    activeNav === "/about" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveNav("/about")}
-                >
+                <NavLink to="/about" className="nav-link">
                   About
                 </NavLink>
               </li>
