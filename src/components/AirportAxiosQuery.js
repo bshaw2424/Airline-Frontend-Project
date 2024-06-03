@@ -4,14 +4,16 @@ export const axiosCallToLatitudeAndLongitudeCoordinates = async (
   type,
   airportCode,
 ) => {
-  const apiKey = "YD07ub+l4kuNqmk2vsP5vg==i0tJXQxsPIm8k20l";
+  const apiNinja_api_key = process.env.REACT_APP_AXIOS_API_KEY;
+  // converts into their original characters
+  const key = decodeURIComponent(apiNinja_api_key);
 
   try {
     const url = `https://api.api-ninjas.com/v1/airports?${type}=${airportCode}`;
 
     // axios call with the url
     const response = await axios.get(url, {
-      headers: { "X-Api-Key": apiKey },
+      headers: { "X-Api-Key": key },
     });
 
     // axios response data
