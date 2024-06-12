@@ -1,9 +1,9 @@
-import HeroImage from "./HeroImage";
+import HomeDescription from "./HomeDescription";
 
-const Hero = () => {
+const Hero = ({ loading }) => {
   return (
-    <section>
-      <HeroImage />
+    <section id="hero">
+      <HomeDescription loading={loading} />
     </section>
   );
 };
