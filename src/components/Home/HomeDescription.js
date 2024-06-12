@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
-import { SlLocationPin } from "react-icons/sl";
 import { ThreeDots } from "react-loader-spinner";
 import { useState } from "react";
 
-const HomeDescription = () => {
+const HomeDescription = ({ isLoading }) => {
   const [sending, isSending] = useState(false);
 
   const buttonClick = () => {
     isSending(true);
+    isLoading(false);
   };
-  console.log(sending);
+
   return (
     <section
       style={{
@@ -35,9 +35,6 @@ const HomeDescription = () => {
             }}
             className="d-flex justify-content-center align-items-center"
           >
-            <span className="me-3 hero-icon">
-              <SlLocationPin />
-            </span>
             Finding your next favorite travel destination awaits.
             <span className=" w-100 home-description-button-container">
               <Link
